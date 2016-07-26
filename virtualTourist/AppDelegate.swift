@@ -13,9 +13,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    let pins = CoreDataStack(modelName: "Model")!
+    
+    func preloadData(){
+        
+        // Remove previous stuff (if any)
+//        do{
+//            try stack.dropAllData()
+//        }catch{
+//            print("Error droping all objects in DB")
+//        }
+        
+        // Create a pin
+        let sanFrancisco = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
+        print("san francisco", sanFrancisco)
+        
+    }
 
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        preloadData()
         return true
     }
 

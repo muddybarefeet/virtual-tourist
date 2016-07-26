@@ -9,6 +9,7 @@
 //import Foundation
 import UIKit
 import MapKit
+import CoreData
 
 class TravelLocationsMapView: UIViewController {
     
@@ -16,6 +17,15 @@ class TravelLocationsMapView: UIViewController {
     //deal with user map interation -> modally present next controller on tap of a pin
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Get the pins created
+        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let stack = delegate.pins
+        
+        let fr = NSFetchRequest(entityName: "Pin")
+        //fr.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true),
+                              //NSSortDescriptor(key: "creationDate", ascending: false)]
+        
         let longUIPress = UILongPressGestureRecognizer(target: self, action: #selector(self.action))
         longUIPress.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longUIPress)
