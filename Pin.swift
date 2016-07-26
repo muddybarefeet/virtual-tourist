@@ -16,8 +16,8 @@ class Pin: NSManagedObject {
     convenience init(lat: Double, long: Double,  context : NSManagedObjectContext){
         if let ent = NSEntityDescription.entityForName("Pin", inManagedObjectContext: context){
             self.init(entity: ent, insertIntoManagedObjectContext: context)
-            self.latitude = lat
-            self.longitude = long
+            self.latitude = lat as Double
+            self.longitude = long as Double
             self.createdAt = NSDate()
         }else{
             fatalError("Unable to find Entity name!")

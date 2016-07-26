@@ -11,7 +11,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class TravelLocationsMapView: UIViewController {
+class TravelLocationsMapView: CoreDataTravelLocationViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     //deal with user map interation -> modally present next controller on tap of a pin
@@ -19,19 +19,38 @@ class TravelLocationsMapView: UIViewController {
         super.viewDidLoad()
         
         // Get the pins created
-        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let stack = delegate.pins
+        let app = UIApplication.sharedApplication().delegate as! AppDelegate
+        let pins = app.pins
         
-        let fr = NSFetchRequest(entityName: "Pin")
-        //fr.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true),
-                              //NSSortDescriptor(key: "creationDate", ascending: false)]
+        let fetchRequest = NSFetchRequest(entityName: "Pin")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: pins.context, sectionNameKeyPath: nil, cacheName: nil)
         
-        let longUIPress = UILongPressGestureRecognizer(target: self, action: #selector(self.action))
+        addCurrentPins(fetchedResultsController!)
+        
+        let longUIPress = UILongPressGestureRecognizer(target: self, action: #selector(self.addPin))
         longUIPress.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longUIPress)
     }
     
-    func action(gestureRecognizer:UIGestureRecognizer){
+    //load the existing pins to the map
+    func addCurrentPins (fetchedController: NSFetchedResultsController) {
+        let entities = fetchedController.fetchedObjects as! [Pin]
+        for item in entities{
+            //            for key in item.entity.attributesByName.keys{
+            //            }
+            let lat = item.latitude as! Double
+            let long = item.longitude as! Double
+            
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            mapView.addAnnotation(annotation)
+        }
+    }
+
+    
+    func addPin(gestureRecognizer:UIGestureRecognizer){
         print("action to add annotation called")
         let touchPoint = gestureRecognizer.locationInView(mapView)
         let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
