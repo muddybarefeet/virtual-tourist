@@ -15,6 +15,7 @@
 		955E3D6A1D465AE400AF07D0 /* virtualTouristUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E3D691D465AE400AF07D0 /* virtualTouristUITests.swift */; };
 		955E3D7A1D465B9F00AF07D0 /* TravelLocationsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E3D791D465B9F00AF07D0 /* TravelLocationsMapView.swift */; };
 		955E3D7C1D465BB200AF07D0 /* PhotoAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E3D7B1D465BB200AF07D0 /* PhotoAlbumViewController.swift */; };
+		955E3D7E1D46FCE600AF07D0 /* MapViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E3D7D1D46FCE600AF07D0 /* MapViewDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		955E3D6B1D465AE400AF07D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		955E3D791D465B9F00AF07D0 /* TravelLocationsMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TravelLocationsMapView.swift; sourceTree = "<group>"; };
 		955E3D7B1D465BB200AF07D0 /* PhotoAlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumViewController.swift; sourceTree = "<group>"; };
+		955E3D7D1D46FCE600AF07D0 /* MapViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 			children = (
 				955E3D791D465B9F00AF07D0 /* TravelLocationsMapView.swift */,
 				955E3D7B1D465BB200AF07D0 /* PhotoAlbumViewController.swift */,
+				955E3D7D1D46FCE600AF07D0 /* MapViewDelegate.swift */,
 			);
 			name = Contoller;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				955E3D7E1D46FCE600AF07D0 /* MapViewDelegate.swift in Sources */,
 				955E3D7A1D465B9F00AF07D0 /* TravelLocationsMapView.swift in Sources */,
 				955E3D4A1D465AE300AF07D0 /* AppDelegate.swift in Sources */,
 				955E3D7C1D465BB200AF07D0 /* PhotoAlbumViewController.swift in Sources */,
