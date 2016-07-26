@@ -86,3 +86,42 @@ struct CoreDataStack {
     }
 
 }
+
+extension CoreDataStack {
+    
+    func save() {
+        context.performBlockAndWait(){
+            if self.context.hasChanges{
+                do{
+                    try self.context.save()
+                }catch{
+                    fatalError("Error while saving main context: \(error)")
+                }
+                // now we save in the background
+                self.persistingContext.performBlock(){
+                    do{
+                        try self.persistingContext.save()
+                    }catch{
+                        fatalError("Error while saving persisting context: \(error)")
+                    }
+                }
+            }
+        }
+    }
+    
+//    func autoSave(delayInSeconds : Int){
+//        if delayInSeconds > 0 {
+//            print("Autosaving")
+//            save()
+//            
+//            let delayInNanoSeconds = UInt64(delayInSeconds) * NSEC_PER_SEC
+//            let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInNanoSeconds))
+//            
+//            dispatch_after(time, dispatch_get_main_queue(), {
+//                self.autoSave(delayInSeconds)
+//            })
+//        }
+//    }
+    
+}
+

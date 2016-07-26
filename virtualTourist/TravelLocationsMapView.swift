@@ -14,14 +14,13 @@ import CoreData
 class TravelLocationsMapView: CoreDataTravelLocationViewController {
     
     @IBOutlet weak var mapView: MKMapView!
+    
+    let app = UIApplication.sharedApplication().delegate as! AppDelegate
+    
     //deal with user map interation -> modally present next controller on tap of a pin
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Get the pins created
-        let app = UIApplication.sharedApplication().delegate as! AppDelegate
         let pins = app.pins
-        
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: pins.context, sectionNameKeyPath: nil, cacheName: nil)
@@ -57,6 +56,8 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController {
         let annotation = MKPointAnnotation()
         annotation.coordinate = newCoordinates
         mapView.addAnnotation(annotation)
+        //make a new pin model
+        let newPin = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
     }
     
 }

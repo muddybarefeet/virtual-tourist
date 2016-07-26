@@ -14,21 +14,9 @@ class CoreDataTravelLocationViewController: UIViewController {
     // MARK:  - Properties
     var fetchedResultsController : NSFetchedResultsController?{
         didSet{
-            // Whenever the frc changes, we execute the search and
-            // reload the table
-//            fetchedResultsController?.delegate = self
             executeSearch()
-            //view.reloadData()
         }
     }
-    
-//    init(fetchedResultsController fc : NSFetchedResultsController,
-//                                  style : UIViewController = .None){
-//        fetchedResultsController = fc
-//        super.init(style: style)
-//        
-//        
-//    }
     
     // Do not worry about this initializer. I has to be implemented
     // because of the way Swift interfaces with an Objective C
