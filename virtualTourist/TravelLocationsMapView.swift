@@ -69,7 +69,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         print("pin clicked", view.annotation?.coordinate)
         //save coordinates and segue
         selectedCoords = view.annotation?.coordinate
-        performSegueWithIdentifier("showPhotoAlbum", sender: view.annotation)
+        performSegueWithIdentifier("showPhotoAlbum", sender: nil)
     }
     
     //coords passed to the new controller

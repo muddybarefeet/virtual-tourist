@@ -22,7 +22,7 @@ class PhotoAlbumViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("in collection view", coordinates)
+        print("in collection view")
     }
     
     

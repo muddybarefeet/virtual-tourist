@@ -44,10 +44,10 @@
             </objects>
             <point key="canvasLocation" x="305" y="429"/>
         </scene>
-        <!--Collection View Controller-->
+        <!--Photo Album View Controller-->
         <scene sceneID="HEz-Co-Oux">
             <objects>
-                <collectionViewController id="o6m-PN-IV5" sceneMemberID="viewController">
+                <collectionViewController id="o6m-PN-IV5" customClass="PhotoAlbumViewController" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="4fh-Ic-q3P">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
