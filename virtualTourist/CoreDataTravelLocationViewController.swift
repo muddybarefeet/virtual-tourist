@@ -28,7 +28,6 @@ class CoreDataTravelLocationViewController: UIViewController {
     func executeSearch(){
         if let fc = fetchedResultsController{
             do{
-                print("try to do search for object")
                 try fc.performFetch()
             }catch let e as NSError{
                 print("Error while trying to perform a search: \n\(e)\n\(fetchedResultsController)")

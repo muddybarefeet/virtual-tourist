@@ -33,9 +33,9 @@ class MapViewDelegate: NSObject, MKMapViewDelegate {
 //        return pinView
 //    }
     
-    
-//    //on click of a pin, open the url in the subtitle
-//    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    //on click of a pin, open the url in the subtitle
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        print("pin clicked", view.annotation?.coordinate)
 //        if control == view.rightCalloutAccessoryView {
 //            let app = UIApplication.sharedApplication()
 //            if var mediaURL = (view.annotation?.subtitle!)! as String? {
@@ -52,6 +52,6 @@ class MapViewDelegate: NSObject, MKMapViewDelegate {
 //                }
 //            }
 //        }
-//    }
+    }
     
 }

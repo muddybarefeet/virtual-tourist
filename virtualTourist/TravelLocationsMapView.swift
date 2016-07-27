@@ -11,15 +11,20 @@ import UIKit
 import MapKit
 import CoreData
 
-class TravelLocationsMapView: CoreDataTravelLocationViewController {
+class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
+    
+    var selectedCoords: CLLocationCoordinate2D!
+    
+//    var mapDelegate = MapViewDelegate()
     
     let app = UIApplication.sharedApplication().delegate as! AppDelegate
     
     //deal with user map interation -> modally present next controller on tap of a pin
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapView.delegate = self
         let pins = app.pins
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
@@ -36,8 +41,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController {
     func addCurrentPins (fetchedController: NSFetchedResultsController) {
         let entities = fetchedController.fetchedObjects as! [Pin]
         for item in entities{
-            //            for key in item.entity.attributesByName.keys{
-            //            }
             let lat = item.latitude as! Double
             let long = item.longitude as! Double
             
@@ -57,7 +60,27 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController {
         annotation.coordinate = newCoordinates
         mapView.addAnnotation(annotation)
         //make a new pin model
-        let newPin = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+        _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+        print("------------------------->",app.pins)
     }
+    
+    //on click of a pin go to the album
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+        print("pin clicked", view.annotation?.coordinate)
+        //save coordinates and segue
+        selectedCoords = view.annotation?.coordinate
+        performSegueWithIdentifier("showPhotoAlbum", sender: view.annotation)
+    }
+    
+    //coords passed to the new controller
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
+        print("passing data")
+        if segue.identifier == "showPhotoAlbum" {
+            print("identifier found")
+            let photoViewController =  segue.destinationViewController as? PhotoAlbumViewController
+            photoViewController?.coordinates = selectedCoords
+        }
+    }
+
     
 }
