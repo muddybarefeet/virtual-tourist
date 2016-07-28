@@ -23,13 +23,17 @@ class PhotoAlbumViewController: UICollectionViewController {
         Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
             if (data != nil) {
                 print("data", data)
+                //now display the data to the user
             } else {
                 print("error", error)
             }
         }
     }
     
-    //call the Flickr API with the lat and long
-    
+    //random image page choose from API
+    //display collection view of photos
+    //add update collection button - how to overwrite images saved? And when to save a collection
+    //delete photo
+    //Add a README doc
     
 }

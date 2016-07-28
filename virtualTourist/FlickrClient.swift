@@ -13,11 +13,8 @@ class FlickrClient {
     static let sharedInstance = FlickrClient()
     private init() {}
     
-//
-    
     func getImagesForLocation (lat: Double, long: Double, completionHandlerForImages: (data: AnyObject?, error: String?) -> Void) {
         
-        //pull together the various end points to make the request
         let baseUrl = "https://api.flickr.com/services/rest"
         
         let parameters: [String: String!] = [
@@ -31,7 +28,6 @@ class FlickrClient {
         ]
         
         let request = makeRequest(baseUrl, parameters: parameters)
-        print("request", request)
         
         sendRequest(request) { (data, response, error) in
             print("recieve request sent")
@@ -46,9 +42,6 @@ class FlickrClient {
         
     }
     
-    //safe_search=1&extras=url_m&bbox=-123.4194,36.7749,-121.4194,38.7749&api_key=321b0c2c23c0824823d30ff54f120380&method=flickr.photos.search&format=json&nojsoncallback=1
-    //method=flickr.photos.search&nojsoncallback=1&safe_search=1&extras=url_m&format=json&api_key=321b0c2c23c0824823d30ff54f120380
-    
     private func bboxString (latitude: Double, longitude: Double) -> String {
         let minimumLon = max(longitude - Constants.Flickr.SearchBBoxHalfWidth, Constants.Flickr.SearchLonRange.0)
         let minimumLat = max(latitude - Constants.Flickr.SearchBBoxHalfHeight, Constants.Flickr.SearchLatRange.0)
@@ -60,8 +53,7 @@ class FlickrClient {
     
     
     private func makeRequest (baseURL: String, parameters: [String:String!]) -> NSMutableURLRequest {
-        print("make the request")
-        //TODO: sent a random page number to got
+        //-----TODO: sent a random page number to got-----
         var newURL = baseURL + "?"
         var first = true;
         for (key, value) in parameters {
@@ -73,13 +65,12 @@ class FlickrClient {
                 newURL += "&" + newParam
             }
         }
-        print("new URL--->", newURL)
         
         let request = NSMutableURLRequest(URL: NSURL(string: newURL)!)
         return request
-        
     }
     
+    //return random page if call came from new collection button
     private func sendRequest (request: NSMutableURLRequest, completionHandlerForRequest: (data: AnyObject?, response: NSHTTPURLResponse??, error: String?) -> Void) {
         
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
@@ -100,15 +91,29 @@ class FlickrClient {
             do {
                 parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
             } catch {
-                print("Could not parse the response to a readable format", parsedResult)
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "Could not parse the response to a readable format")
                 return
             }
             print("json", parsedResult)
-            completionHandlerForRequest(data: parsedResult, response: (response as! NSHTTPURLResponse), error: nil)
+            
+//            if let totalPages = parsedResult!["pages"] as? Int {
+//                
+//                let pageLimit = min(totalPages, 40)
+//                let randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1
+//                self.displayRandomImageCall(request, withPageNumber: randomPageNumber)
+//            }
+            
+            //completionHandlerForRequest(data: parsedResult, response: (response as! NSHTTPURLResponse), error: nil)
         }
         
         task.resume()
+        
+    }
+    
+    //call the API a second time, now with a random page number
+    private func displayRandomImageCall (request: NSMutableURLRequest, withPageNumber: Int) {
+        
+        
         
     }
         
