@@ -21,12 +21,9 @@ class PhotoAlbumViewController: UICollectionViewController {
     var longitude: Double = 0.0
     var photos: [String] = []
     
-    var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         adjustFlowLayout(view.frame.size)
-        activitySpinner.center = self.view.center
         print("in collection view")
         Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
             if (data!.count > 0) {
@@ -37,8 +34,6 @@ class PhotoAlbumViewController: UICollectionViewController {
                         //RELOAD DATA to show in collection
                         self.collectionView!.reloadData()
                         print("photos saved")
-                        self.activitySpinner.startAnimating()
-                        self.view.addSubview(self.activitySpinner)
                     }
                 } else {
                     //THROW ERROR THAT DATA NOT THERE
@@ -76,23 +71,12 @@ class PhotoAlbumViewController: UICollectionViewController {
         return cell
     }
     
-//    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-//        print("FINISJED DISPLAYING CONTENT")
-//        self.activitySpinner.stopAnimating()
-//        self.view.willRemoveSubview(self.activitySpinner)
-//    }
-    
-    override func collectionView(collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, atIndexPath indexPath: NSIndexPath) {
-        print("DID FINISH")
-    }
-    
-    
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         adjustFlowLayout(size)
     }
     
     func adjustFlowLayout(size: CGSize) {
-        let space: CGFloat = 2.0
+        let space: CGFloat = 1.0
         let dimension:CGFloat = size.width >= size.height ? (size.width - (5 * space)) / 6.0 :  (size.width - (2 * space)) / 3.0
         flowLayout.minimumLineSpacing = 2.0
         flowLayout.minimumInteritemSpacing = 2.0
