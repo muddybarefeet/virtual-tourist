@@ -13,7 +13,7 @@ class FlickrClient {
     static let sharedInstance = FlickrClient()
     private init() {}
     
-    func getImagesForLocation (lat: Double, long: Double, completionHandlerForImages: (data: AnyObject?, error: String?) -> Void) {
+    func getImagesForLocation (lat: Double, long: Double, completionHandlerForImages: (data: [String]?, error: String?) -> Void) {
         
         let baseUrl = "https://api.flickr.com/services/rest"
         
@@ -30,17 +30,23 @@ class FlickrClient {
         let request = makeRequest(baseUrl, parameters: parameters)
         
         sendRequest(request) { (data, response, error) in
-            print("recieve request sent")
             if (error != nil) {
                 print("error", error)
                 completionHandlerForImages(data: nil, error: error)
             } else {
-                print("good response from request", data)
-                completionHandlerForImages(data: data, error: nil)
+                completionHandlerForImages(data: data!, error: nil)
             }
         }
         
     }
+    
+    //call the API a second time, now with a random page number
+    func displayRgetNewCollectionOfImages (request: NSMutableURLRequest, withPageNumber: Int) {
+        
+       //TODO
+        
+    }
+
     
     private func bboxString (latitude: Double, longitude: Double) -> String {
         let minimumLon = max(longitude - Constants.Flickr.SearchBBoxHalfWidth, Constants.Flickr.SearchLonRange.0)
@@ -71,19 +77,19 @@ class FlickrClient {
     }
     
     //return random page if call came from new collection button
-    private func sendRequest (request: NSMutableURLRequest, completionHandlerForRequest: (data: AnyObject?, response: NSHTTPURLResponse??, error: String?) -> Void) {
+    private func sendRequest (request: NSMutableURLRequest, completionHandlerForRequest: (data: [String]?, response: NSHTTPURLResponse?, error: String?) -> Void) {
         
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
             if error != nil {
-                completionHandlerForRequest(data: nil, response: nil, error: "There was an error in the request response")
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There was an error in the request response")
                 return
             }
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                completionHandlerForRequest(data: nil, response: nil, error: "The status code returned was not a OK")
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "The status code returned was not a OK")
                 return
             }
             guard let data = data else {
-                completionHandlerForRequest(data: nil, response: nil, error: "No data returned from the API")
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "No data returned from the API")
                 return
             }
             
@@ -94,8 +100,30 @@ class FlickrClient {
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "Could not parse the response to a readable format")
                 return
             }
-            print("json", parsedResult)
             
+            //extract the key for images array
+            guard let photos = parsedResult!["photos"] as? NSDictionary else {
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There were no photo key in the response")
+                return
+            }
+            guard let collectionArray = photos["photo"] as? NSArray else {
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There were no photos key in the response")
+                return
+            }
+            
+            if collectionArray.count == 0 {
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There were no photos returned in the response")
+            }
+            
+            var photoArray: [String] = []
+            
+            //take the array of data and make a new array of just the images
+            for obj in collectionArray {
+                if let imageURL = obj["url_m"] as? String {
+                   photoArray.append(imageURL)
+                }
+            }
+        
 //            if let totalPages = parsedResult!["pages"] as? Int {
 //                
 //                let pageLimit = min(totalPages, 40)
@@ -103,20 +131,13 @@ class FlickrClient {
 //                self.displayRandomImageCall(request, withPageNumber: randomPageNumber)
 //            }
             
-            //completionHandlerForRequest(data: parsedResult, response: (response as! NSHTTPURLResponse), error: nil)
+            completionHandlerForRequest(data: photoArray, response: (response as! NSHTTPURLResponse), error: nil)
         }
         
         task.resume()
         
     }
     
-    //call the API a second time, now with a random page number
-    private func displayRandomImageCall (request: NSMutableURLRequest, withPageNumber: Int) {
-        
-        
-        
-    }
-        
 }
     
 

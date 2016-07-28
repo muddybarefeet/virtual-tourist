@@ -17,8 +17,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     var selectedCoords: CLLocationCoordinate2D!
     
-//    var mapDelegate = MapViewDelegate()
-    
     let app = UIApplication.sharedApplication().delegate as! AppDelegate
     
     //deal with user map interation -> modally present next controller on tap of a pin
@@ -50,19 +48,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             mapView.addAnnotation(annotation)
         }
     }
-
-    
-    func addPin(gestureRecognizer:UIGestureRecognizer){
-        print("action to add annotation called")
-        let touchPoint = gestureRecognizer.locationInView(mapView)
-        let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = newCoordinates
-        mapView.addAnnotation(annotation)
-        //make a new pin model
-        _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
-        print("------------------------->",app.pins)
-    }
     
     //on click of a pin go to the album
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
@@ -82,6 +67,18 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             photoViewController?.longitude = selectedCoords.longitude
         }
     }
-
+    
+    //delegate method to trigger function on tap of a pin
+    func addPin(gestureRecognizer:UIGestureRecognizer){
+        print("action to add annotation called")
+        let touchPoint = gestureRecognizer.locationInView(mapView)
+        let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = newCoordinates
+        mapView.addAnnotation(annotation)
+        //make a new pin model
+        _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+        print("------------------------->",app.pins)
+    }
     
 }

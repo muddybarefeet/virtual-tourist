@@ -16,24 +16,42 @@ class PhotoAlbumViewController: UICollectionViewController {
     //deal with data persistence
     var latitude: Double = 0.0
     var longitude: Double = 0.0
+    var photos: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("in collection view")
         Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
-            if (data != nil) {
-                print("data", data)
-                //now display the data to the user
+            if (data!.count > 0) {
+                //save data to store
+                if let data = data {
+                    self.photos = data
+                } else {
+                    //THROW ERROR THAT DATA NOT THERE
+                }
             } else {
                 print("error", error)
             }
         }
     }
     
-    //random image page choose from API
+    //random image page choose from API on click of new collection button else just display first page
     //display collection view of photos
     //add update collection button - how to overwrite images saved? And when to save a collection
     //delete photo
     //Add a README doc
+    
+    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return photos.count
+    }
+    
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
+        let item = photos[indexPath.row]
+        cell.
+        
+    }
+    
+    
     
 }
