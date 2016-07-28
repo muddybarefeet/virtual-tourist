@@ -78,7 +78,8 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         if segue.identifier == "showPhotoAlbum" {
             print("identifier found")
             let photoViewController =  segue.destinationViewController as? PhotoAlbumViewController
-            photoViewController?.coordinates = selectedCoords
+            photoViewController?.latitude = selectedCoords.latitude
+            photoViewController?.longitude = selectedCoords.longitude
         }
     }
 

@@ -12,18 +12,24 @@ import MapKit
 
 class PhotoAlbumViewController: UICollectionViewController {
     
+    let Flickr = FlickrClient.sharedInstance
     //deal with data persistence
-    var coordinates: CLLocationCoordinate2D!
-    
-    override func viewWillAppear(animated: Bool) {
-        print("in collection view will appear", coordinates)
-    }
-
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("in collection view")
+        Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
+            if (data != nil) {
+                print("data", data)
+            } else {
+                print("error", error)
+            }
+        }
     }
+    
+    //call the Flickr API with the lat and long
     
     
 }
