@@ -21,20 +21,25 @@ class PhotoAlbumViewController: UICollectionViewController {
     var longitude: Double = 0.0
     var photos: [String] = []
     
-    var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+    var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         adjustFlowLayout(view.frame.size)
+        activitySpinner.center = self.view.center
         print("in collection view")
         Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
             if (data!.count > 0) {
                 //save data to store
                 if let data = data {
-                    self.photos = data
-                    //RELOAD DATA to show in collection
-                    self.collectionView!.reloadData()
-                    print("photos saved")
+                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                        self.photos = data
+                        //RELOAD DATA to show in collection
+                        self.collectionView!.reloadData()
+                        print("photos saved")
+                        self.activitySpinner.startAnimating()
+                        self.view.addSubview(self.activitySpinner)
+                    }
                 } else {
                     //THROW ERROR THAT DATA NOT THERE
                 }
@@ -42,7 +47,6 @@ class PhotoAlbumViewController: UICollectionViewController {
                 print("error", error)
             }
         }
-        //self.collectionView?.addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.Old, context: nil)
     }
     
     //random image page choose from API on click of new collection button else just display first page
@@ -57,8 +61,6 @@ class PhotoAlbumViewController: UICollectionViewController {
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
         //download the image and get the data
-        activitySpinner.startAnimating()
-        view.addSubview(activitySpinner)
         
         Flickr.getImageData(photos[indexPath.row]) { (data, error) in
             if data != nil {
@@ -74,11 +76,16 @@ class PhotoAlbumViewController: UICollectionViewController {
         return cell
     }
     
-    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        print("FINISJED DISPLAYING CONTENT")
-        self.activitySpinner.stopAnimating()
-        self.view.willRemoveSubview(self.activitySpinner)
+//    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+//        print("FINISJED DISPLAYING CONTENT")
+//        self.activitySpinner.stopAnimating()
+//        self.view.willRemoveSubview(self.activitySpinner)
+//    }
+    
+    override func collectionView(collectionView: UICollectionView, didEndDisplayingSupplementaryView view: UICollectionReusableView, forElementOfKind elementKind: String, atIndexPath indexPath: NSIndexPath) {
+        print("DID FINISH")
     }
+    
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         adjustFlowLayout(size)
