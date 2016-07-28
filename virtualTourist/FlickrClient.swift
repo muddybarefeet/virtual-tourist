@@ -46,7 +46,24 @@ class FlickrClient {
        //TODO
         
     }
+    
+    func getImageData (image: String, completionHandlerForImageData: (data: UIImage?, error: String?) -> Void) {
+        print("extract Image data")
+        
+        let imageURL = NSURL(string: image)!
+        let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
+            print("task finished")
+            if error == nil {
+                completionHandlerForImageData(data: UIImage(data: data!), error: nil)
+            } else {
+                completionHandlerForImageData(data: nil, error: "No image data returned")
+            }
+            
+        }
+        
+        task.resume()
 
+    }
     
     private func bboxString (latitude: Double, longitude: Double) -> String {
         let minimumLon = max(longitude - Constants.Flickr.SearchBBoxHalfWidth, Constants.Flickr.SearchLonRange.0)
