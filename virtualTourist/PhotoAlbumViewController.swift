@@ -59,7 +59,6 @@ class PhotoAlbumViewController: UICollectionViewController {
         
         Flickr.getImageData(photos[indexPath.row]) { (data, error) in
             if data != nil {
-                print("show image")
                 let downloadedImage = data
                 NSOperationQueue.mainQueue().addOperationWithBlock {
                     cell.photoView.image = downloadedImage
@@ -71,12 +70,17 @@ class PhotoAlbumViewController: UICollectionViewController {
         return cell
     }
     
+    @IBAction func getNewAlbum(sender: AnyObject) {
+        //logic to get new selection of photos
+        print("get new photos!")
+    }
+    
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         adjustFlowLayout(size)
     }
     
     func adjustFlowLayout(size: CGSize) {
-        let space: CGFloat = 1.0
+        let space: CGFloat = 3.0
         let dimension:CGFloat = size.width >= size.height ? (size.width - (5 * space)) / 6.0 :  (size.width - (2 * space)) / 3.0
         flowLayout.minimumLineSpacing = 2.0
         flowLayout.minimumInteritemSpacing = 2.0
