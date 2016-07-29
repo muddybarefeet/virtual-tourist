@@ -49,14 +49,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
         }
     }
     
-    //random image page choose from API on click of new collection button else just display first page
+    
     //add update collection button - how to overwrite images saved? And when to save a collection
     //delete photo
     //Add a README doc
+    //throw WARNING if the total page count is ONE to let the user know that they will never see more than current images
     
     @IBAction func getNewAlbum(sender: AnyObject) {
         //logic to get new selection of photos
-        print("get new photos!")
         Flickr.getImagesForLocation(latitude, long: longitude, recall: true) { (data, error) in
             if (data!.count > 0) {
                 if let data = data {
@@ -71,6 +71,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
             }
             
         }
+    }
+    
+    @IBAction func done(sender: AnyObject) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
