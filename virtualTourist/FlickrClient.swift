@@ -13,13 +13,14 @@ class FlickrClient {
     static let sharedInstance = FlickrClient()
     private init() {}
     
+    var totalPages: Int = 0
     var photos: [String] = []
     
-    func getImagesForLocation (lat: Double, long: Double, completionHandlerForImages: (data: [String]?, error: String?) -> Void) {
+    func getImagesForLocation (lat: Double, long: Double, recall: Bool, completionHandlerForImages: (data: [String]?, error: String?) -> Void) {
         
         let baseUrl = "https://api.flickr.com/services/rest"
         
-        let parameters: [String: String!] = [
+        var parameters: [String: String!] = [
             Constants.FlickrParameterKeys.SafeSearch: Constants.FlickrParameterValues.SafeSearch,
             Constants.FlickrParameterKeys.Extras: Constants.FlickrParameterValues.Extras,
             Constants.FlickrParameterKeys.BoundingBox: bboxString(lat, longitude: long),
@@ -28,6 +29,15 @@ class FlickrClient {
             Constants.FlickrParameterKeys.Format: Constants.FlickrParameterValues.Format,
             Constants.FlickrParameterKeys.NoJsonCallback: Constants.FlickrParameterValues.NoJsonCallback
         ]
+        
+        //need to add in the random page number request
+        if recall == true {
+            //make random number and then add with
+            let pageLimit = min(totalPages, 40)
+            let randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1
+            print("random page", randomPageNumber)
+            parameters[Constants.FlickrParameterKeys.Page] = String(randomPageNumber)
+        }
         
         let request = makeRequest(baseUrl, parameters: parameters)
         
@@ -42,15 +52,7 @@ class FlickrClient {
         
     }
     
-    //call the API a second time, now with a random page number
-    func displayRgetNewCollectionOfImages (request: NSMutableURLRequest, withPageNumber: Int) {
-        
-       //TODO
-        
-    }
-    
     func getImageData (image: String, completionHandlerForImageData: (data: UIImage?, error: String?) -> Void) {
-
         let imageURL = NSURL(string: image)!
         let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
             if error == nil {
@@ -58,11 +60,8 @@ class FlickrClient {
             } else {
                 completionHandlerForImageData(data: nil, error: "No image data returned")
             }
-            
         }
-        
         task.resume()
-
     }
     
     private func bboxString (latitude: Double, longitude: Double) -> String {
@@ -76,7 +75,6 @@ class FlickrClient {
     
     
     private func makeRequest (baseURL: String, parameters: [String:String!]) -> NSMutableURLRequest {
-        //-----TODO: sent a random page number to got-----
         var newURL = baseURL + "?"
         var first = true;
         for (key, value) in parameters {
@@ -88,7 +86,6 @@ class FlickrClient {
                 newURL += "&" + newParam
             }
         }
-        
         let request = NSMutableURLRequest(URL: NSURL(string: newURL)!)
         return request
     }
@@ -117,10 +114,13 @@ class FlickrClient {
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "Could not parse the response to a readable format")
                 return
             }
-            
             //extract the key for images array
             guard let photos = parsedResult!["photos"] as? NSDictionary else {
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There were no photo key in the response")
+                return
+            }
+            guard let totalPages = photos["pages"] as? Int else {
+                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There is not a key for the number of pages returned")
                 return
             }
             guard let collectionArray = photos["photo"] as? NSArray else {
@@ -140,13 +140,9 @@ class FlickrClient {
                    photoArray.append(imageURL)
                 }
             }
-        
-//            if let totalPages = parsedResult!["pages"] as? Int {
-//                
-//                let pageLimit = min(totalPages, 40)
-//                let randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1
-//                self.displayRandomImageCall(request, withPageNumber: randomPageNumber)
-//            }
+            
+            //set the toal pages count for the user to use if hit the see new album button
+            self.totalPages = totalPages
             
             completionHandlerForRequest(data: photoArray, response: (response as! NSHTTPURLResponse), error: nil)
         }

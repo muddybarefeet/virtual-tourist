@@ -19,6 +19,7 @@ struct Constants {
         static let Method = "method"
         static let Format = "format"
         static let NoJsonCallback = "nojsoncallback"
+        static let Page = "page"
     }
     
     struct FlickrParameterValues {

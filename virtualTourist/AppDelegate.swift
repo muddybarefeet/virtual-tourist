@@ -25,8 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
         
         // Create a pin
-        let sanFrancisco = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
-        print("san francisco", sanFrancisco)
+        _ = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
+
         
     }
 

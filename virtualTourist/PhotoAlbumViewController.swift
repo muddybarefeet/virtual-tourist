@@ -30,7 +30,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
         collectionView.dataSource = self
         
         adjustFlowLayout(view.frame.size)
-        Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
+        Flickr.getImagesForLocation(latitude, long: longitude, recall: false) { (data, error) in
             if (data!.count > 0) {
                 //save data to store
                 if let data = data {
@@ -57,6 +57,20 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     @IBAction func getNewAlbum(sender: AnyObject) {
         //logic to get new selection of photos
         print("get new photos!")
+        Flickr.getImagesForLocation(latitude, long: longitude, recall: true) { (data, error) in
+            if (data!.count > 0) {
+                if let data = data {
+                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                        self.Flickr.photos = data
+                        self.collectionView.reloadData()
+                        print("photos saved", self.Flickr.photos.count)
+                    }
+                }
+            } else {
+                print("error", error)
+            }
+            
+        }
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {

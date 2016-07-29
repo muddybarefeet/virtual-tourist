@@ -9,7 +9,7 @@
         <!--Travel Locations Map View-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="TravelLocationsMapView" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="travelLocationsViewController" id="BYZ-38-t0r" customClass="TravelLocationsMapView" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -47,7 +47,7 @@
         <!--Photo Album View Controller-->
         <scene sceneID="qyH-hv-Kkt">
             <objects>
-                <viewController id="SfG-DR-KXI" customClass="PhotoAlbumViewController" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="photoAlbumViewController" id="SfG-DR-KXI" customClass="PhotoAlbumViewController" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0kM-SM-iJD"/>
                         <viewControllerLayoutGuide type="bottom" id="gbC-7g-5eS"/>
@@ -126,46 +126,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qnf-Ob-6O9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="997" y="-329"/>
-        </scene>
-        <!--Photo Album View Controller-->
-        <scene sceneID="HEz-Co-Oux">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PQI-Lr-WbM" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <collectionViewController id="o6m-PN-IV5" customClass="PhotoAlbumViewController" customModule="virtualTourist" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="4fh-Ic-q3P">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.14921095749999999" green="0.76621809549999997" blue="0.72552637880000004" alpha="1" colorSpace="calibratedRGB"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Wtr-zH-AAc">
-                            <size key="itemSize" width="173" height="179"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="photoCell" id="jsY-yf-VDM" customClass="PhotoCollectionCellViewController" customModule="virtualTourist" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="173" height="179"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="173" height="179"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dqg-bd-JPj">
-                                            <rect key="frame" x="8" y="8" width="157" height="163"/>
-                                        </imageView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="o6m-PN-IV5" id="SYF-G9-5bS"/>
-                            <outlet property="delegate" destination="o6m-PN-IV5" id="Otl-3Y-BZW"/>
-                        </connections>
-                    </collectionView>
-                </collectionViewController>
-            </objects>
-            <point key="canvasLocation" x="997" y="429"/>
         </scene>
     </scenes>
 </document>
