@@ -13,6 +13,8 @@ class FlickrClient {
     static let sharedInstance = FlickrClient()
     private init() {}
     
+    var photos: [String] = []
+    
     func getImagesForLocation (lat: Double, long: Double, completionHandlerForImages: (data: [String]?, error: String?) -> Void) {
         
         let baseUrl = "https://api.flickr.com/services/rest"
@@ -96,7 +98,7 @@ class FlickrClient {
         
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
             if error != nil {
-                completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There was an error in the request response")
+                completionHandlerForRequest(data: nil, response: nil, error: "There was an error in the request response")
                 return
             }
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		954A011C1D4A463E00641D0E /* PhotoCollectionCellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954A011B1D4A463E00641D0E /* PhotoCollectionCellViewController.swift */; };
+		954A011E1D4A7DC100641D0E /* CollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954A011D1D4A7DC100641D0E /* CollectionViewDelegate.swift */; };
 		955E3D4A1D465AE300AF07D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955E3D491D465AE300AF07D0 /* AppDelegate.swift */; };
 		955E3D4F1D465AE400AF07D0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 955E3D4D1D465AE400AF07D0 /* Main.storyboard */; };
 		955E3D511D465AE400AF07D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 955E3D501D465AE400AF07D0 /* Assets.xcassets */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		954A011B1D4A463E00641D0E /* PhotoCollectionCellViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCollectionCellViewController.swift; sourceTree = "<group>"; };
+		954A011D1D4A7DC100641D0E /* CollectionViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewDelegate.swift; sourceTree = "<group>"; };
 		955E3D461D465AE300AF07D0 /* virtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = virtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		955E3D491D465AE300AF07D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		955E3D4E1D465AE400AF07D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				955E3D7D1D46FCE600AF07D0 /* MapViewDelegate.swift */,
 				95C08E5D1D47ACE600ABEE5E /* CoreDataTravelLocationViewController.swift */,
 				954A011B1D4A463E00641D0E /* PhotoCollectionCellViewController.swift */,
+				954A011D1D4A7DC100641D0E /* CollectionViewDelegate.swift */,
 			);
 			name = Contoller;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				955E3D7E1D46FCE600AF07D0 /* MapViewDelegate.swift in Sources */,
 				95C08E591D47A72A00ABEE5E /* Pin+CoreDataProperties.swift in Sources */,
 				955E3D7A1D465B9F00AF07D0 /* TravelLocationsMapView.swift in Sources */,
+				954A011E1D4A7DC100641D0E /* CollectionViewDelegate.swift in Sources */,
 				95C08E521D47A69C00ABEE5E /* Model.xcdatamodeld in Sources */,
 				95C08E5E1D47ACE600ABEE5E /* CoreDataTravelLocationViewController.swift in Sources */,
 				955E3D4A1D465AE300AF07D0 /* AppDelegate.swift in Sources */,

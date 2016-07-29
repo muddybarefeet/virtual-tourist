@@ -10,30 +10,35 @@
 import UIKit
 import MapKit
 
-class PhotoAlbumViewController: UICollectionViewController {
+class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     let Flickr = FlickrClient.sharedInstance
     //deal with data persistence
     var latitude: Double = 0.0
     var longitude: Double = 0.0
-    var photos: [String] = []
+    
+    //var photos: [String] = FlickrClient.sharedInstance.photos
+    //var collectionDelegate = CollectionViewDelegate()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
         adjustFlowLayout(view.frame.size)
-        print("in collection view")
         Flickr.getImagesForLocation(latitude, long: longitude) { (data, error) in
             if (data!.count > 0) {
                 //save data to store
                 if let data = data {
                     NSOperationQueue.mainQueue().addOperationWithBlock {
-                        self.photos = data
+                        self.Flickr.photos = data
                         //RELOAD DATA to show in collection
-                        self.collectionView!.reloadData()
-                        print("photos saved")
+                        self.collectionView.reloadData()
+                        print("photos saved", self.Flickr.photos.count)
                     }
                 } else {
                     //THROW ERROR THAT DATA NOT THERE
@@ -48,27 +53,6 @@ class PhotoAlbumViewController: UICollectionViewController {
     //add update collection button - how to overwrite images saved? And when to save a collection
     //delete photo
     //Add a README doc
-    
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photos.count
-    }
-    
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
-        //download the image and get the data
-        
-        Flickr.getImageData(photos[indexPath.row]) { (data, error) in
-            if data != nil {
-                let downloadedImage = data
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-                    cell.photoView.image = downloadedImage
-                }
-            } else {
-                print("bad data of image nothing returned")
-            }
-        }
-        return cell
-    }
     
     @IBAction func getNewAlbum(sender: AnyObject) {
         //logic to get new selection of photos
@@ -86,6 +70,31 @@ class PhotoAlbumViewController: UICollectionViewController {
         flowLayout.minimumInteritemSpacing = 2.0
         flowLayout.itemSize = CGSizeMake(dimension, dimension)
         
+    }
+    
+}
+
+extension PhotoAlbumViewController: UICollectionViewDelegate {
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return Flickr.photos.count
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
+        //download the image and get the data
+        
+        Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
+            if data != nil {
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+                    let downloadedImage = data
+                    cell.photoView.image = downloadedImage
+                }
+            } else {
+                print("bad data of image nothing returned")
+            }
+        }
+        return cell
     }
     
 }
