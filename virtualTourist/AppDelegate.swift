@@ -18,13 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func preloadData(){
         
         // Remove previous stuff (if any)
-//        do{
-//            try stack.dropAllData()
-//        }catch{
-//            print("Error droping all objects in DB")
-//        }
-        
-        // Create a pin
+        do{
+            try pins.dropAllData()
+        }catch{
+            print("Error droping all objects in DB")
+        }
+
         _ = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
 
         
