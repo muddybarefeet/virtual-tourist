@@ -37,7 +37,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     //load the existing pins to the map
     func addCurrentPins (fetchedController: NSFetchedResultsController) {
         let entities = fetchedController.fetchedObjects as! [Pin]
-        for item in entities{
+        for item in entities {
             let lat = item.latitude as! Double
             let long = item.longitude as! Double
             let id = item.objectID
@@ -63,6 +63,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             let controller = segue.destinationViewController as! PhotoAlbumViewController
             let annotation = mapView.selectedAnnotations[0]
             mapView.deselectAnnotation(annotation, animated: true)
+            controller.currentContext = fetchedResultsController!.managedObjectContext
             controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID((annotation as! CustomPointAnnotation).id!) as? Pin
         }
     }

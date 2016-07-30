@@ -20,32 +20,34 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     let Flickr = FlickrClient.sharedInstance
 
     var currentPin: Pin?
+    var currentContext: NSManagedObjectContext?
     
     //var photos: [String] = FlickrClient.sharedInstance.photos
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if currentPin?.photo == nil || currentPin?.photo?.count == 0 {
+        if currentPin?.photo?.count == 0 {
             print("no pics currently")
             //then we need some pics from Flickr to display
-//            Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (data, error) in
-//                if (data!.count > 0) {
-//                    //save data to store
-//                    if let data = data {
-//                        NSOperationQueue.mainQueue().addOperationWithBlock {
-//                            self.Flickr.photos = data
-//                            //RELOAD DATA to show in collection
-//                            self.collectionView.reloadData()
-//                            print("photos saved", self.Flickr.photos.count)
-//                        }
-//                    } else {
-//                        //THROW ERROR THAT DATA NOT THERE
-//                    }
-//                } else {
-//                    print("error", error)
-//                }
-//            }
+            Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (data, error) in
+                if (data!.count > 0) {
+                    //save data to store
+                    if let data = data {
+                        NSOperationQueue.mainQueue().addOperationWithBlock {
+                            self.Flickr.photos = data
+                            //RELOAD DATA to show in collection
+                            self.collectionView.reloadData()
+                            print("photos saved", self.Flickr.photos.count)
+                            print(self.currentPin)
+                        }
+                    } else {
+                        //THROW ERROR THAT DATA NOT THERE
+                    }
+                } else {
+                    print("error", error)
+                }
+            }
         } else {
             //display the images already saved
             print("already have images")
@@ -59,7 +61,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     }
     
     
-    //add update collection button - how to overwrite images saved? And when to save a collection
     //delete photo
     //Add a README doc
     //throw WARNING if the total page count is ONE to let the user know that they will never see more than current images
@@ -83,6 +84,23 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     }
     
     @IBAction func done(sender: AnyObject) {
+        //add logic to save the photos to the pin for future!
+        //if there is photos already saved then delete them and then save new ones
+        if currentPin?.photo?.count > 0 {
+            print("deleting old pins....?")
+            currentPin?.photo?.delete(currentPin?.photo)
+        }
+        
+        print("current pin deleted pics--------->", currentPin?.photo?.count)
+        //loop through the photos and save each to a Photo View
+        
+        for url in Flickr.photos {
+            let dataToAdd = Photo(url: url, pin: currentPin!, context: currentContext!)
+            currentPin?.photo?.setByAddingObject(dataToAdd)
+        }
+        
+        print("current pin with new pics---------->", currentPin?.photo?.count)
+
         dismissViewControllerAnimated(true, completion: nil)
     }
     
