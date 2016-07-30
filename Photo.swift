@@ -12,7 +12,7 @@ import CoreData
 
 class Photo: NSManagedObject {
 
-    convenience init(url: String, context : NSManagedObjectContext){
+    convenience init(url: String,  context : NSManagedObjectContext){
         
         if let ent = NSEntityDescription.entityForName("Photo",
                                                        inManagedObjectContext: context){
@@ -36,5 +36,6 @@ class Photo: NSManagedObject {
             return fmt.stringFromDate(createdAt!)
         }
     }
+
 
 }

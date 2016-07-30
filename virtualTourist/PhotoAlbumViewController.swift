@@ -18,36 +18,44 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     @IBOutlet weak var collectionView: UICollectionView!
     
     let Flickr = FlickrClient.sharedInstance
-    //deal with data persistence
-    var latitude: Double = 0.0
-    var longitude: Double = 0.0
+
     var currentPin: Pin?
     
     //var photos: [String] = FlickrClient.sharedInstance.photos
-    //var collectionDelegate = CollectionViewDelegate()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if currentPin?.photo == nil || currentPin?.photo?.count == 0 {
+            print("no pics currently")
+            //then we need some pics from Flickr to display
+//            Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (data, error) in
+//                if (data!.count > 0) {
+//                    //save data to store
+//                    if let data = data {
+//                        NSOperationQueue.mainQueue().addOperationWithBlock {
+//                            self.Flickr.photos = data
+//                            //RELOAD DATA to show in collection
+//                            self.collectionView.reloadData()
+//                            print("photos saved", self.Flickr.photos.count)
+//                        }
+//                    } else {
+//                        //THROW ERROR THAT DATA NOT THERE
+//                    }
+//                } else {
+//                    print("error", error)
+//                }
+//            }
+        } else {
+            //display the images already saved
+            print("already have images")
+        }
+        
+        //else the false key is already set so nothing else needs doing add pin and segue
         collectionView.delegate = self
         collectionView.dataSource = self
         adjustFlowLayout(view.frame.size)
-        Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (data, error) in
-            if (data!.count > 0) {
-                //save data to store
-                if let data = data {
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
-                        self.Flickr.photos = data
-                        //RELOAD DATA to show in collection
-                        self.collectionView.reloadData()
-                        print("photos saved", self.Flickr.photos.count)
-                    }
-                } else {
-                    //THROW ERROR THAT DATA NOT THERE
-                }
-            } else {
-                print("error", error)
-            }
-        }
+        
     }
     
     

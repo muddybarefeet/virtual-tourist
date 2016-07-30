@@ -59,13 +59,11 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     //coords passed to the new controller
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == "showPhotoAlbum" {
-            
-                let controller = segue.destinationViewController as! PhotoAlbumViewController
-                let annotation = mapView.selectedAnnotations[0]
-                mapView.deselectAnnotation(annotation, animated: true)
-                print("data", (annotation as! CustomPointAnnotation).id)
-                controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID((annotation as! CustomPointAnnotation).id!) as? Pin
-            
+        
+            let controller = segue.destinationViewController as! PhotoAlbumViewController
+            let annotation = mapView.selectedAnnotations[0]
+            mapView.deselectAnnotation(annotation, animated: true)
+            controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID((annotation as! CustomPointAnnotation).id!) as? Pin
         }
     }
     
