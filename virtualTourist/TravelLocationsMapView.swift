@@ -33,6 +33,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         let longUIPress = UILongPressGestureRecognizer(target: self, action: #selector(self.addPin))
         longUIPress.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longUIPress)
+        
     }
     
     //load the existing pins to the map
@@ -41,10 +42,11 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         for item in entities{
             let lat = item.latitude as! Double
             let long = item.longitude as! Double
-            
+            let id = item.objectID
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-            let annotation = MKPointAnnotation()
+            let annotation = CustomPointAnnotation(coreDataID: id)
             annotation.coordinate = coordinate
+            print("annotation")
             mapView.addAnnotation(annotation)
         }
     }
@@ -67,22 +69,23 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
                 //now we have the pin it can be passed to the new view!
                 //print("pin recieved", pin)
                 //photosVC.currentPin = pin
-                
+                print("lat and long", selectedCoords)
                 
                 let fetchRequest = NSFetchRequest()
                 let entityDescription = NSEntityDescription.entityForName("Pin", inManagedObjectContext: fetchedResultsController!.managedObjectContext)
                 fetchRequest.entity = entityDescription
                 
-                let predicate = NSPredicate(format: "latitude = %@", selectedCoords.latitude)
+                //let latPredicate = NSPredicate(format: "latitude = %@", selectedCoords.latitude)
                 //let longPredicate = NSPredicate(format: "longitude = %@", selectedCoords.longitude)
-                
+                print("before",fetchRequest.predicate)
                 //let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [latPredicate, longPredicate])
                 //fetchRequest.predicate = predicate
+                print("after", fetchRequest.predicate)
                 
-                var fetchedObjects: [AnyObject] = try! fetchedResultsController!.managedObjectContext.executeFetchRequest(fetchRequest)
+                let fetchedObjects: [AnyObject] = try! fetchedResultsController!.managedObjectContext.executeFetchRequest(fetchRequest)
                 
                 print("data", fetchedObjects)
-                //fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: fetchedResultsController!.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+
                 
             }
         }
@@ -90,14 +93,25 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     //delegate method to trigger function on tap of a pin
     func addPin(gestureRecognizer:UIGestureRecognizer){
-        print("action to add annotation called")
-        let touchPoint = gestureRecognizer.locationInView(mapView)
-        let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = newCoordinates
-        mapView.addAnnotation(annotation)
-        //make a new pin model
-        _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+        if gestureRecognizer.state == .Ended {
+            let touchPoint = gestureRecognizer.locationInView(mapView)
+            let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = newCoordinates
+            mapView.addAnnotation(annotation)
+            //make a new pin model
+            _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+        }
+    }
+    
+}
+
+class CustomPointAnnotation: MKPointAnnotation {
+    
+    var id: AnyObject?
+    
+    init(coreDataID: AnyObject) {
+        id = coreDataID
     }
     
 }
