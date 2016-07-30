@@ -59,12 +59,32 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     //coords passed to the new controller
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        print("passing data")
         if segue.identifier == "showPhotoAlbum" {
-            print("identifier found")
-            let photoViewController =  segue.destinationViewController as? PhotoAlbumViewController
-            photoViewController?.latitude = selectedCoords.latitude
-            photoViewController?.longitude = selectedCoords.longitude
+            if segue.destinationViewController is PhotoAlbumViewController {
+                let annotation = mapView.selectedAnnotations[0]
+                mapView.deselectAnnotation(annotation, animated: true)
+                //let pin = CoreDataLookup.retrieveClickedPin(selectedCoords, context: fetchedResultsController!.managedObjectContext)
+                //now we have the pin it can be passed to the new view!
+                //print("pin recieved", pin)
+                //photosVC.currentPin = pin
+                
+                
+                let fetchRequest = NSFetchRequest()
+                let entityDescription = NSEntityDescription.entityForName("Pin", inManagedObjectContext: fetchedResultsController!.managedObjectContext)
+                fetchRequest.entity = entityDescription
+                
+                let predicate = NSPredicate(format: "latitude = %@", selectedCoords.latitude)
+                //let longPredicate = NSPredicate(format: "longitude = %@", selectedCoords.longitude)
+                
+                //let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [latPredicate, longPredicate])
+                //fetchRequest.predicate = predicate
+                
+                var fetchedObjects: [AnyObject] = try! fetchedResultsController!.managedObjectContext.executeFetchRequest(fetchRequest)
+                
+                print("data", fetchedObjects)
+                //fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: fetchedResultsController!.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+                
+            }
         }
     }
     
@@ -78,7 +98,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         mapView.addAnnotation(annotation)
         //make a new pin model
         _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
-        print("------------------------->",app.pins)
     }
     
 }
