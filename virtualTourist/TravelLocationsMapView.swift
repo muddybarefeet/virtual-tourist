@@ -15,8 +15,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     @IBOutlet weak var mapView: MKMapView!
     
-    var selectedId: NSManagedObjectID?
-    
     let app = UIApplication.sharedApplication().delegate as! AppDelegate
     
     //deal with user map interation -> modally present next controller on tap of a pin
@@ -55,11 +53,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("pin clicked", view.annotation?.coordinate)
         //save coordinates and segue
-        
-        if view.annotation is CustomPointAnnotation {
-            print("here", (view.annotation as! CustomPointAnnotation).id )
-            selectedId = (view.annotation as! CustomPointAnnotation).id
-        }
         performSegueWithIdentifier("showPhotoAlbum", sender: nil)
     }
     
@@ -70,7 +63,8 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
                 let controller = segue.destinationViewController as! PhotoAlbumViewController
                 let annotation = mapView.selectedAnnotations[0]
                 mapView.deselectAnnotation(annotation, animated: true)
-                controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID(selectedId!) as? Pin
+                print("data", (annotation as! CustomPointAnnotation).id)
+                controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID((annotation as! CustomPointAnnotation).id!) as? Pin
             
         }
     }

@@ -27,7 +27,6 @@
 		95FFE0681D4D079B00B10CF4 /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FFE0641D4D079B00B10CF4 /* Pin.swift */; };
 		95FFE0691D4D079B00B10CF4 /* Photo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FFE0651D4D079B00B10CF4 /* Photo+CoreDataProperties.swift */; };
 		95FFE06A1D4D079B00B10CF4 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FFE0661D4D079B00B10CF4 /* Photo.swift */; };
-		95FFE06C1D4D0A6B00B10CF4 /* CoreDataLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FFE06B1D4D0A6B00B10CF4 /* CoreDataLookup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,7 +74,6 @@
 		95FFE0641D4D079B00B10CF4 /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Pin.swift; path = ../Pin.swift; sourceTree = "<group>"; };
 		95FFE0651D4D079B00B10CF4 /* Photo+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Photo+CoreDataProperties.swift"; path = "../Photo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		95FFE0661D4D079B00B10CF4 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Photo.swift; path = ../Photo.swift; sourceTree = "<group>"; };
-		95FFE06B1D4D0A6B00B10CF4 /* CoreDataLookup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataLookup.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,7 +164,6 @@
 				95C08E5D1D47ACE600ABEE5E /* CoreDataTravelLocationViewController.swift */,
 				954A011B1D4A463E00641D0E /* PhotoCollectionCellViewController.swift */,
 				954A011D1D4A7DC100641D0E /* CollectionViewDelegate.swift */,
-				95FFE06B1D4D0A6B00B10CF4 /* CoreDataLookup.swift */,
 			);
 			name = Contoller;
 			sourceTree = "<group>";
@@ -338,7 +335,6 @@
 				95FFE06A1D4D079B00B10CF4 /* Photo.swift in Sources */,
 				95C08E521D47A69C00ABEE5E /* Model.xcdatamodeld in Sources */,
 				95C08E5E1D47ACE600ABEE5E /* CoreDataTravelLocationViewController.swift in Sources */,
-				95FFE06C1D4D0A6B00B10CF4 /* CoreDataLookup.swift in Sources */,
 				955E3D4A1D465AE300AF07D0 /* AppDelegate.swift in Sources */,
 				955E3D7C1D465BB200AF07D0 /* PhotoAlbumViewController.swift in Sources */,
 				95C08E5C1D47A7B600ABEE5E /* CoreDataStack.swift in Sources */,
