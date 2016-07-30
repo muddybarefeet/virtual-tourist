@@ -9,6 +9,7 @@
 //import Foundation
 import UIKit
 import MapKit
+import CoreData
 
 class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     
@@ -20,6 +21,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
     //deal with data persistence
     var latitude: Double = 0.0
     var longitude: Double = 0.0
+    var currentPin: Pin?
     
     //var photos: [String] = FlickrClient.sharedInstance.photos
     //var collectionDelegate = CollectionViewDelegate()

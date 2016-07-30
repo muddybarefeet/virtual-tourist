@@ -15,7 +15,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     @IBOutlet weak var mapView: MKMapView!
     
-    var selectedCoords: CLLocationCoordinate2D!
+    var selectedId: NSManagedObjectID?
     
     let app = UIApplication.sharedApplication().delegate as! AppDelegate
     
@@ -46,7 +46,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
             let annotation = CustomPointAnnotation(coreDataID: id)
             annotation.coordinate = coordinate
-            print("annotation")
+            print("annotation", annotation.id)
             mapView.addAnnotation(annotation)
         }
     }
@@ -55,39 +55,23 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("pin clicked", view.annotation?.coordinate)
         //save coordinates and segue
-        selectedCoords = view.annotation?.coordinate
+        
+        if view.annotation is CustomPointAnnotation {
+            print("here", (view.annotation as! CustomPointAnnotation).id )
+            selectedId = (view.annotation as! CustomPointAnnotation).id
+        }
         performSegueWithIdentifier("showPhotoAlbum", sender: nil)
     }
     
     //coords passed to the new controller
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
         if segue.identifier == "showPhotoAlbum" {
-            if segue.destinationViewController is PhotoAlbumViewController {
+            
+                let controller = segue.destinationViewController as! PhotoAlbumViewController
                 let annotation = mapView.selectedAnnotations[0]
                 mapView.deselectAnnotation(annotation, animated: true)
-                //let pin = CoreDataLookup.retrieveClickedPin(selectedCoords, context: fetchedResultsController!.managedObjectContext)
-                //now we have the pin it can be passed to the new view!
-                //print("pin recieved", pin)
-                //photosVC.currentPin = pin
-                print("lat and long", selectedCoords)
-                
-                let fetchRequest = NSFetchRequest()
-                let entityDescription = NSEntityDescription.entityForName("Pin", inManagedObjectContext: fetchedResultsController!.managedObjectContext)
-                fetchRequest.entity = entityDescription
-                
-                //let latPredicate = NSPredicate(format: "latitude = %@", selectedCoords.latitude)
-                //let longPredicate = NSPredicate(format: "longitude = %@", selectedCoords.longitude)
-                print("before",fetchRequest.predicate)
-                //let predicate = NSCompoundPredicate(type: NSCompoundPredicateType.AndPredicateType, subpredicates: [latPredicate, longPredicate])
-                //fetchRequest.predicate = predicate
-                print("after", fetchRequest.predicate)
-                
-                let fetchedObjects: [AnyObject] = try! fetchedResultsController!.managedObjectContext.executeFetchRequest(fetchRequest)
-                
-                print("data", fetchedObjects)
-
-                
-            }
+                controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID(selectedId!) as? Pin
+            
         }
     }
     
@@ -108,9 +92,9 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
 
 class CustomPointAnnotation: MKPointAnnotation {
     
-    var id: AnyObject?
+    var id: NSManagedObjectID?
     
-    init(coreDataID: AnyObject) {
+    init(coreDataID: NSManagedObjectID) {
         id = coreDataID
     }
     
