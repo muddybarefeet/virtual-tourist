@@ -11,7 +11,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoAlbumViewController: UIViewController, UICollectionViewDataSource {
+class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollectionViewDataSource {
     
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
@@ -140,6 +140,14 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
             }
         }
         return cell
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        //if we select an image then we want to delete it
+        let imageSelected = Flickr.photos[indexPath.row]
+        //now get the object for this index path
+        
+        
     }
     
 }
