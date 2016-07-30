@@ -21,11 +21,12 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        
+        //if there is data already stored then get it and add to map
         let pins = app.pins
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: pins.context, sectionNameKeyPath: nil, cacheName: nil)
-        
         addCurrentPins(fetchedResultsController!)
         
         let longUIPress = UILongPressGestureRecognizer(target: self, action: #selector(self.addPin))
@@ -64,6 +65,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             let annotation = mapView.selectedAnnotations[0]
             mapView.deselectAnnotation(annotation, animated: true)
             controller.currentContext = fetchedResultsController!.managedObjectContext
+            //get the id property on the annotation
             controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID((annotation as! CustomPointAnnotation).id!) as? Pin
         }
     }
@@ -71,13 +73,16 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     //delegate method to trigger function on tap of a pin
     func addPin(gestureRecognizer:UIGestureRecognizer){
         if gestureRecognizer.state == .Ended {
+            
             let touchPoint = gestureRecognizer.locationInView(mapView)
             let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-            let annotation = MKPointAnnotation()
+            
+            let newPin = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+            let id = newPin.objectID
+            let annotation = CustomPointAnnotation(coreDataID: id)
             annotation.coordinate = newCoordinates
             mapView.addAnnotation(annotation)
-            //make a new pin model
-            _ = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
+            
         }
     }
     
@@ -86,9 +91,11 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
 class CustomPointAnnotation: MKPointAnnotation {
     
     var id: NSManagedObjectID?
+    //var coordinates: CLLocationCoordinate2D?
     
     init(coreDataID: NSManagedObjectID) {
         id = coreDataID
+//        coordinates = coords
     }
     
 }

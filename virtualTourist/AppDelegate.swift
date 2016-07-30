@@ -15,8 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let pins = CoreDataStack(modelName: "Model")!
     
-    func preloadData(){
-        
+    func resetData () {
         // Remove previous stuff (if any)
 //        do{
 //            try pins.dropAllData()
@@ -24,15 +23,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            print("Error droping all objects in DB")
 //        }
 
-       _ = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
-
-        
+       //_ = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
     }
 
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        preloadData()
+        //resetData()
         return true
     }
 
