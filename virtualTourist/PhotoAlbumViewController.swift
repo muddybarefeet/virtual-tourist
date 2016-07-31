@@ -89,27 +89,37 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     @IBAction func done(sender: AnyObject) {
         //add logic to save the photos to the pin for future!
         //if there is photos already saved then delete them and then save new ones
+        print("current pin pre-deleted pics--------->", currentPin?.photos?.count)
+        
         if currentPin?.photos?.count > 0 {
             print("deleting old pins....?")
-            
-            //ERROR THROWN HERE??? WHY??
             //currentPin?.photos?.delete(currentPin?.photos)
-        }
-        
-        print("current pin deleted pics--------->", currentPin?.photos?.count)
-        //loop through the photos and save each to a Photo View
-        
-        for url in Flickr.photos {
-            Flickr.getImageData(url) { (data, error) in
-                if data != nil {
-                    let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
-                    self.currentPin?.photos?.setByAddingObject(dataToAdd)
-                } else {
-                    print("bad data of image nothing returned")
+            let fetchRequest = NSFetchRequest(entityName: "Photo")
+            
+            do {
+                let items = try currentContext!.executeFetchRequest(fetchRequest) as! [NSManagedObject]
+                for item in items {
+                    currentContext!.deleteObject(item)
                 }
-
+                print("current pin deleted pics--------->", currentPin?.photos?.count)
+            } catch {
+                print("error :(")
             }
+            
         }
+
+        //loop through the photos and save each to a Photo View
+//        for url in Flickr.photos {
+//            Flickr.getImageData(url) { (data, error) in
+//                if data != nil {
+//                    let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
+//                    self.currentPin?.photos?.setByAddingObject(dataToAdd)
+//                } else {
+//                    print("bad data of image nothing returned")
+//                }
+//
+//            }
+//        }
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -153,11 +163,9 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         //if we select an image then we want to delete it
-//        let clickedImageData = Flickr.photos[indexPath.row]
-        //now get the object for this index path
-        //currentContext?.deleteObject(clickedImageData)
         Flickr.photos.removeAtIndex(indexPath.row)
         collectionView.reloadData()
+        //only save images to core data on close so nothing else needed here
     }
     
 }

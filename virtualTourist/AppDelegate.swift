@@ -22,8 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }catch{
 //            print("Error droping all objects in DB")
 //        }
-
-       //_ = Pin(lat: 37.7749, long: -122.4194, context: pins.context)
     }
 
     
