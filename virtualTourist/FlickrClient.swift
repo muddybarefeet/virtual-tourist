@@ -46,22 +46,11 @@ class FlickrClient {
                 print("error", error)
                 completionHandlerForImages(data: nil, error: error)
             } else {
+                //array of url strings returned want to save this as NSData objects
                 completionHandlerForImages(data: data!, error: nil)
             }
         }
         
-    }
-    
-    func getImageData (image: String, completionHandlerForImageData: (data: NSData?, error: String?) -> Void) {
-        let imageURL = NSURL(string: image)!
-        let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
-            if error == nil {
-                completionHandlerForImageData(data: data, error: nil)
-            } else {
-                completionHandlerForImageData(data: nil, error: "No image data returned")
-            }
-        }
-        task.resume()
     }
     
     private func bboxString (latitude: Double, longitude: Double) -> String {
@@ -149,6 +138,18 @@ class FlickrClient {
         
         task.resume()
         
+    }
+    
+    func getImageData (image: String, completionHandlerForImageData: (data: NSData?, error: String?) -> Void) {
+        let imageURL = NSURL(string: image)!
+        let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
+            if error == nil {
+                completionHandlerForImageData(data: data, error: nil)
+            } else {
+                completionHandlerForImageData(data: nil, error: "No image data returned")
+            }
+        }
+        task.resume()
     }
     
 }

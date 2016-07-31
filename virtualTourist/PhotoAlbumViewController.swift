@@ -35,11 +35,10 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     //save data to store
                     if let data = data {
                         NSOperationQueue.mainQueue().addOperationWithBlock {
+                            //make an array of url strings
                             self.Flickr.photos = data
                             //RELOAD DATA to show in collection
                             self.collectionView.reloadData()
-                            print("photos saved", self.Flickr.photos.count)
-                            print(self.currentPin)
                         }
                     } else {
                         //THROW ERROR THAT DATA NOT THERE
@@ -49,16 +48,17 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 }
             }
         } else {
-            //display the images already saved
+//            //display the images already saved
             print("already have images")
-            //extract all the photos from the current pin
-            let allCurrentPhotos = currentPin?.photos?.allObjects
-            //extract photos
-            for photo in allCurrentPhotos! {
-                Flickr.photos.append(String(photo.image))
-            }
-            collectionView.reloadData()
-            print("Flickr", Flickr.photos.count)
+//            //extract all the photos from the current pin
+//            let allCurrentPhotos = currentPin?.photos?.allObjects
+//            //extract photos
+//            for photo in allCurrentPhotos! {
+//                //fill in the array of urls
+//                Flickr.photos.append(String(photo.image))
+//            }
+//            collectionView.reloadData()
+//            print("Flickr", Flickr.photos.count)
         }
         
         //else the false key is already set so nothing else needs doing add pin and segue
@@ -87,40 +87,60 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     }
     
     @IBAction func done(sender: AnyObject) {
-        //add logic to save the photos to the pin for future!
-        //if there is photos already saved then delete them and then save new ones
+
         print("current pin pre-deleted pics--------->", currentPin?.photos?.count)
         
+        //if there are already pins saved then want to delete and then resave the core data models
         if currentPin?.photos?.count > 0 {
             print("deleting old pins....?")
-            //currentPin?.photos?.delete(currentPin?.photos)
-            let fetchRequest = NSFetchRequest(entityName: "Photo")
             
-            do {
-                let items = try currentContext!.executeFetchRequest(fetchRequest) as! [NSManagedObject]
-                for item in items {
-                    currentContext!.deleteObject(item)
-                }
-                print("current pin deleted pics--------->", currentPin?.photos?.count)
-            } catch {
-                print("error :(")
-            }
-            
-        }
-
-        //loop through the photos and save each to a Photo View
-//        for url in Flickr.photos {
-//            Flickr.getImageData(url) { (data, error) in
-//                if data != nil {
-//                    let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
-//                    self.currentPin?.photos?.setByAddingObject(dataToAdd)
+            //var items = currentPin?.photos?.allObjects
+//            currentPin?.photos?
+//            for item in items! {
+//                if (currentContext != nil) {
+////                        currentContext!.deleteObject(item as! NSManagedObject)
+//                    delete(item)
 //                } else {
-//                    print("bad data of image nothing returned")
+//                    print("no context")
 //                }
-//
+//                
 //            }
-//        }
-        dismissViewControllerAnimated(true, completion: nil)
+        
+            //print("current pin deleted pics--------->", items?.count)
+            
+            //then add all current ones back to core data
+//                for url in Flickr.photos {
+//                    Flickr.getImageData(url) { (data, error) in
+//                        if data != nil {
+//                            let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
+//                            self.currentPin?.photos?.setByAddingObject(dataToAdd)
+//                        } else {
+//                            print("bad data of image nothing returned")
+//                        }
+//                        print("we have new pin core datas",self.currentPin!.photos?.count)
+//                        
+//                    }
+//                }
+            dismissViewControllerAnimated(true, completion: nil)
+          
+            
+        } else {
+            //need to save data to core data if not anything already there
+            for url in Flickr.photos {
+                Flickr.getImageData(url) { (data, error) in
+                    if data != nil {
+                        let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
+                        self.currentPin?.photos?.setByAddingObject(dataToAdd)
+                    } else {
+                        print("bad data of image nothing returned")
+                    }
+                    
+                }
+            }
+            dismissViewControllerAnimated(true, completion: nil)
+        }
+        
+        
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -141,24 +161,40 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
 extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return Flickr.photos.count
+        
+        //if Flickr has images then return thrier count else return other number
+        if Flickr.photos.count > 0 {
+            return Flickr.photos.count
+        } else {
+            //TODO decide on a less random number here!
+            return 21
+        }
+        
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
-        //download the image and get the data
         
-        Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
-            if data != nil {
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-                    let downloadedImage = UIImage(data: data!)
-                    cell.photoView.image = downloadedImage
+        //get the cell to show
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
+        //show the placeholder image
+        cell.photoView.image = UIImage(named: "placeholder")
+        //if there are images to lod from Flickr then load them
+        if Flickr.photos.count > 0 {
+            print("in loading pictures if")
+            Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
+                if data != nil {
+                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                        let downloadedImage = UIImage(data: data!)
+                        cell.photoView.image = downloadedImage
+                    }
+                } else {
+                    print("bad data of image nothing returned")
                 }
-            } else {
-                print("bad data of image nothing returned")
             }
         }
+    
         return cell
+        
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
