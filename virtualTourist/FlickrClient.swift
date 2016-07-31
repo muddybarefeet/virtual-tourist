@@ -16,7 +16,7 @@ class FlickrClient {
     var totalPages: Int = 0
     var photos: [String] = []
     
-    func getImagesForLocation (lat: Double, long: Double, recall: Bool, completionHandlerForImages: (data: [String]?, error: String?) -> Void) {
+    func getImagesForLocation (lat: Double, long: Double, recall: Bool, completionHandlerForImages: (success: Bool?, error: String?) -> Void) {
         
         let baseUrl = "https://api.flickr.com/services/rest"
         
@@ -44,10 +44,17 @@ class FlickrClient {
         sendRequest(request) { (data, response, error) in
             if (error != nil) {
                 print("error", error)
-                completionHandlerForImages(data: nil, error: error)
+                completionHandlerForImages(success: nil, error: error)
             } else {
-                //array of url strings returned want to save this as NSData objects
-                completionHandlerForImages(data: data!, error: nil)
+                //save data to the photos array
+                if self.photos.count > 0 {
+                    //delete the array of pics first(if reloading photos then do not want old ones in there too)
+                    self.photos.removeAll()
+                }
+                for url in data! {
+                    self.photos.append(url)
+                }
+                completionHandlerForImages(success: true, error: nil)
             }
         }
         

@@ -31,18 +31,11 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         if currentPin?.photos?.count == 0 {
             print("no pics currently")
             //then we need some pics from Flickr to display
-            Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (data, error) in
-                if (data!.count > 0) {
-                    //save data to store
-                    if let data = data {
-                        NSOperationQueue.mainQueue().addOperationWithBlock {
-                            //make an array of url strings
-                            self.Flickr.photos = data
-                            //RELOAD DATA to show in collection
-                            self.collectionView.reloadData()
-                        }
-                    } else {
-                        //THROW ERROR THAT DATA NOT THERE
+            Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (success, error) in
+                if (success != nil) {
+                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                        //RELOAD DATA to show in collection
+                        self.collectionView.reloadData()
                     }
                 } else {
                     print("error", error)
@@ -71,14 +64,11 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     @IBAction func getNewAlbum(sender: AnyObject) {
         //logic to get new selection of photos
-        Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: true) { (data, error) in
-            if (data!.count > 0) {
-                if let data = data {
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
-                        self.Flickr.photos = data
-                        self.collectionView.reloadData()
-                        print("photos saved", self.Flickr.photos.count)
-                    }
+        Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: true) { (success, error) in
+            if (success != nil) {
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+                    self.collectionView.reloadData()
+                    print("photos saved", self.Flickr.photos.count)
                 }
             } else {
                 print("error", error)
@@ -184,8 +174,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         //show the placeholder image
         cell.photo.image = UIImage(named: "placeholder")
         
-        
-        
         //if there are images to lod from Flickr then load them
         if Flickr.photos.count > 0 {
             activitySpinner.center = cell.imageView.center
@@ -195,8 +183,8 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
                 if data != nil {
                     NSOperationQueue.mainQueue().addOperationWithBlock {
                         let downloadedImage = UIImage(data: data!)
-                        //self.activitySpinner.stopAnimating()
-                        //cell.imageView.willRemoveSubview(activitySpinner)
+                        self.activitySpinner.stopAnimating()
+                        cell.imageView.willRemoveSubview(activitySpinner)
                         cell.photo.image = downloadedImage
                     }
                 } else {
