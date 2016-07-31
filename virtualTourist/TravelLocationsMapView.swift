@@ -64,7 +64,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             let controller = segue.destinationViewController as! PhotoAlbumViewController
             let annotation = mapView.selectedAnnotations[0]
             mapView.deselectAnnotation(annotation, animated: true)
-            controller.currentContext = fetchedResultsController!.managedObjectContext
             //get the id property on the annotation
             controller.currentPin = fetchedResultsController!.managedObjectContext.objectWithID((annotation as! CustomPointAnnotation).id!) as? Pin
         }

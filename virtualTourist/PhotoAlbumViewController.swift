@@ -24,7 +24,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     var currentIndexPath: NSIndexPath?
 
     var currentPin: Pin?
-    var currentContext: NSManagedObjectContext?
     
     var photoData: [NSData] = []
     
@@ -115,58 +114,32 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     }
     
     @IBAction func done(sender: AnyObject) {
-
-        print("current pin pre-deleted pics--------->", currentPin?.photos?.count)
         
+        let context = currentPin?.managedObjectContext
         //if there are already pins saved then want to delete and then resave the core data models
         if currentPin?.photos?.count > 0 {
-            print("deleting old pins....?")
-            
             let context = currentPin?.managedObjectContext
-            
             for photo in (currentPin?.photos)! {
                 //photo.removeAllObjects()
                 //NSManagedObjectContext.deleteObject(photo)
                 context!.deleteObject(photo as! NSManagedObject)
             }
-            
+            //save the deletion to the db
             do {
                 try context?.save()
             } catch {
                 print("not save")
             }
-            
             print("pin new post delete------>", currentPin?.photos?.count)
-            
-            //now resave the latest photos to core data
-            
-            
-        
-//Flickr.photos.removeAll()
-//dismissViewControllerAnimated(true, completion: nil)
-            
-        } else {
-            //need to save data to core data if not anything already there
-            var count = 0
-            for url in Flickr.photos {
-                count += 1
-                Flickr.getImageData(url) { (data, error) in
-                    count -= 1
-                    if data != nil {
-                        let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
-                        self.currentPin?.photos?.setByAddingObject(dataToAdd)
-                    } else {
-                        print("bad data of image nothing returned")
-                    }
-                    if count == 0 {
-                        self.Flickr.photos.removeAll()
-                        self.dismissViewControllerAnimated(true, completion: nil)
-                    }
-                }
-            }
         }
         
-        
+        //now resave the latest photos to core data
+        for blob in photoData {
+            //make new photo obj and add to pin
+            let dataToAdd = Photo(image: blob, pin: self.currentPin!, context: context!)
+            self.currentPin?.photos?.setByAddingObject(dataToAdd)
+        }
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
