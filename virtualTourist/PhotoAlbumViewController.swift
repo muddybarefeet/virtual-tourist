@@ -16,9 +16,12 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var viewButton: UIBarButtonItem!
+
     
     let Flickr = FlickrClient.sharedInstance
     var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+    var currentIndexPath: NSIndexPath?
 
     var currentPin: Pin?
     var currentContext: NSManagedObjectContext?
@@ -27,6 +30,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewButton.title = "New Album"
         
         if currentPin?.photos?.count == 0 {
             print("no pics currently")
@@ -54,15 +58,28 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             collectionView.reloadData()
             print("Flickr", Flickr.photos.count)
         }
-        
-        //else the false key is already set so nothing else needs doing add pin and segue
         collectionView.delegate = self
         collectionView.dataSource = self
         adjustFlowLayout(view.frame.size)
+    }
+    
+    @IBAction func clickedButton(sender: AnyObject) {
+        
+        if viewButton.title! == "New Album" {
+            getNewAlbum()
+        } else if viewButton.title! == "Delete Photo" {
+            if let indexPath = currentIndexPath {
+                Flickr.photos.removeAtIndex(indexPath.row)
+            }
+            //clear the indexPath variable and reset the button name
+            currentIndexPath = nil
+            viewButton.title = "New Album"
+            collectionView.reloadData()
+        }
         
     }
     
-    @IBAction func getNewAlbum(sender: AnyObject) {
+    func getNewAlbum() {
         //logic to get new selection of photos
         Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: true) { (success, error) in
             if (success != nil) {
@@ -73,7 +90,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             } else {
                 print("error", error)
             }
-            
         }
     }
     
@@ -112,8 +128,8 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
 //                        
 //                    }
 //                }
+            Flickr.photos.removeAll()
             dismissViewControllerAnimated(true, completion: nil)
-          
             
         } else {
             //need to save data to core data if not anything already there
@@ -128,6 +144,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     
                 }
             }
+            Flickr.photos.removeAll()
             dismissViewControllerAnimated(true, completion: nil)
         }
         
@@ -173,19 +190,21 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         
         //show the placeholder image
         cell.photo.image = UIImage(named: "placeholder")
-        
+        //activitySpinner.center = cell.imageView.center
+        cell.imageView.addSubview(activitySpinner)
+        activitySpinner.startAnimating()
+
         //if there are images to lod from Flickr then load them
         if Flickr.photos.count > 0 {
-            activitySpinner.center = cell.imageView.center
-            cell.imageView.addSubview(activitySpinner)
-            activitySpinner.startAnimating()
+            
             Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
                 if data != nil {
+                    let downloadedImage = UIImage(data: data!)
                     NSOperationQueue.mainQueue().addOperationWithBlock {
-                        let downloadedImage = UIImage(data: data!)
-                        self.activitySpinner.stopAnimating()
-                        cell.imageView.willRemoveSubview(activitySpinner)
                         cell.photo.image = downloadedImage
+                        //TODO SPINNERS NOT BEING REMOVED!!
+                        self.activitySpinner.stopAnimating()
+                        cell.imageView.willRemoveSubview(self.activitySpinner)
                     }
                 } else {
                     print("bad data of image nothing returned")
@@ -199,9 +218,13 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         //if we select an image then we want to delete it
-        Flickr.photos.removeAtIndex(indexPath.row)
-        collectionView.reloadData()
-        //only save images to core data on close so nothing else needed here
+        //make the selected image semi-opaque
+        print("clicked cell")
+        let cell = collectionView.cellForItemAtIndexPath(indexPath)
+        cell!.alpha = 0.4
+        //trigger fn to change the text on the bottom button
+        viewButton.title = "Delete Photo"
+        currentIndexPath = indexPath
     }
     
 }

@@ -62,7 +62,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="zqw-k2-Yx4"/>
                                     <barButtonItem title="New Album" id="vmf-x8-jHG">
                                         <connections>
-                                            <action selector="getNewAlbum:" destination="SfG-DR-KXI" id="BW9-CC-KJO"/>
+                                            <action selector="clickedButton:" destination="SfG-DR-KXI" id="mzH-8M-CEb"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="k36-uH-QYR"/>
@@ -146,6 +146,7 @@
                     <connections>
                         <outlet property="collectionView" destination="CyU-cE-rqt" id="0pK-zL-lIh"/>
                         <outlet property="flowLayout" destination="bH7-m1-QV1" id="vh3-Et-HL5"/>
+                        <outlet property="viewButton" destination="vmf-x8-jHG" id="bog-03-sqb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qnf-Ob-6O9" userLabel="First Responder" sceneMemberID="firstResponder"/>
