@@ -18,6 +18,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     @IBOutlet weak var collectionView: UICollectionView!
     
     let Flickr = FlickrClient.sharedInstance
+    var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
 
     var currentPin: Pin?
     var currentContext: NSManagedObjectContext?
@@ -48,17 +49,17 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 }
             }
         } else {
-//            //display the images already saved
+            //display the images already saved
             print("already have images")
-//            //extract all the photos from the current pin
-//            let allCurrentPhotos = currentPin?.photos?.allObjects
-//            //extract photos
-//            for photo in allCurrentPhotos! {
-//                //fill in the array of urls
-//                Flickr.photos.append(String(photo.image))
-//            }
-//            collectionView.reloadData()
-//            print("Flickr", Flickr.photos.count)
+            //extract all the photos from the current pin (NSData)
+            let allCurrentPhotos = currentPin?.photos?.allObjects
+            //extract photos
+            for photo in allCurrentPhotos! {
+                //fill in the array of urls with strings of the NSData imgaes that were saved
+                Flickr.photos.append(String(photo.image))
+            }
+            collectionView.reloadData()
+            print("Flickr", Flickr.photos.count)
         }
         
         //else the false key is already set so nothing else needs doing add pin and segue
@@ -174,18 +175,29 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
+        
         //get the cell to show
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
+        
+        let activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+        
         //show the placeholder image
-        cell.photoView.image = UIImage(named: "placeholder")
+        cell.photo.image = UIImage(named: "placeholder")
+        
+        
+        
         //if there are images to lod from Flickr then load them
         if Flickr.photos.count > 0 {
-            print("in loading pictures if")
+            activitySpinner.center = cell.imageView.center
+            cell.imageView.addSubview(activitySpinner)
+            activitySpinner.startAnimating()
             Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
                 if data != nil {
                     NSOperationQueue.mainQueue().addOperationWithBlock {
                         let downloadedImage = UIImage(data: data!)
-                        cell.photoView.image = downloadedImage
+                        //self.activitySpinner.stopAnimating()
+                        //cell.imageView.willRemoveSubview(activitySpinner)
+                        cell.photo.image = downloadedImage
                     }
                 } else {
                     print("bad data of image nothing returned")

@@ -124,10 +124,17 @@ class FlickrClient {
             var photoArray: [String] = []
             
             //take the array of data and make a new array of just the images
-            for obj in collectionArray {
-                if let imageURL = obj["url_m"] as? String {
+//            for obj in collectionArray {
+//                if let imageURL = obj["url_m"] as? String {
+//                   photoArray.append(imageURL)
+//                }
+//            }
+            var i = 0
+            while i < 18 {
+                if let imageURL = collectionArray[i]["url_m"] as? String {
                    photoArray.append(imageURL)
                 }
+                i+=1
             }
             
             //set the toal pages count for the user to use if hit the see new album button

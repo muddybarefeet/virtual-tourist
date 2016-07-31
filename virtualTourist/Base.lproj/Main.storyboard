@@ -85,14 +85,33 @@
                                             <rect key="frame" x="0.0" y="0.0" width="165" height="170"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="FwN-0x-cNK">
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vt1-K4-Wol">
                                                     <rect key="frame" x="8" y="8" width="149" height="154"/>
-                                                </imageView>
+                                                    <subviews>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Hud-sJ-0gg">
+                                                            <rect key="frame" x="0.0" y="0.0" width="149" height="154"/>
+                                                        </imageView>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="bottom" secondItem="Hud-sJ-0gg" secondAttribute="bottom" id="22e-AI-Mqn"/>
+                                                        <constraint firstItem="Hud-sJ-0gg" firstAttribute="top" secondItem="vt1-K4-Wol" secondAttribute="top" id="IQW-qU-mUY"/>
+                                                        <constraint firstAttribute="trailing" secondItem="Hud-sJ-0gg" secondAttribute="trailing" id="QeG-bB-hrJ"/>
+                                                        <constraint firstItem="Hud-sJ-0gg" firstAttribute="leading" secondItem="vt1-K4-Wol" secondAttribute="leading" id="aIp-cB-XHA"/>
+                                                    </constraints>
+                                                </view>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <constraints>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="top" secondItem="IcO-Dv-AvE" secondAttribute="topMargin" id="4Dg-mi-foR"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="bottom" secondItem="IcO-Dv-AvE" secondAttribute="bottomMargin" id="EbG-Yn-92N"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="leading" secondItem="IcO-Dv-AvE" secondAttribute="leadingMargin" id="JRZ-te-ZZN"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="trailing" secondItem="IcO-Dv-AvE" secondAttribute="trailingMargin" id="QTn-d6-KwM"/>
+                                        </constraints>
                                         <connections>
-                                            <outlet property="photoView" destination="FwN-0x-cNK" id="sGf-iS-ELe"/>
+                                            <outlet property="imageView" destination="vt1-K4-Wol" id="AlX-IO-lhU"/>
+                                            <outlet property="photo" destination="Hud-sJ-0gg" id="buh-qT-HmH"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -134,7 +153,4 @@
             <point key="canvasLocation" x="997" y="-329"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="placeholder" width="206" height="206"/>
-    </resources>
 </document>
