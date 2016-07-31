@@ -51,6 +51,14 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         } else {
             //display the images already saved
             print("already have images")
+            //extract all the photos from the current pin
+            let allCurrentPhotos = currentPin?.photos?.allObjects
+            //extract photos
+            for photo in allCurrentPhotos! {
+                Flickr.photos.append(String(photo.image))
+            }
+            collectionView.reloadData()
+            print("Flickr", Flickr.photos.count)
         }
         
         //else the false key is already set so nothing else needs doing add pin and segue
@@ -59,11 +67,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         adjustFlowLayout(view.frame.size)
         
     }
-    
-    
-    //delete photo
-    //Add a README doc
-    //throw WARNING if the total page count is ONE to let the user know that they will never see more than current images
     
     @IBAction func getNewAlbum(sender: AnyObject) {
         //logic to get new selection of photos
@@ -86,10 +89,12 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     @IBAction func done(sender: AnyObject) {
         //add logic to save the photos to the pin for future!
         //if there is photos already saved then delete them and then save new ones
-//        if currentPin?.photos?.count > 0 {
-//            print("deleting old pins....?")
-//            currentPin?.photos?.delete(currentPin?.photos)
-//        }
+        if currentPin?.photos?.count > 0 {
+            print("deleting old pins....?")
+            
+            //ERROR THROWN HERE??? WHY??
+            //currentPin?.photos?.delete(currentPin?.photos)
+        }
         
         print("current pin deleted pics--------->", currentPin?.photos?.count)
         //loop through the photos and save each to a Photo View
@@ -148,10 +153,11 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         //if we select an image then we want to delete it
-        _ = Flickr.photos[indexPath.row]
+//        let clickedImageData = Flickr.photos[indexPath.row]
         //now get the object for this index path
-        
-        
+        //currentContext?.deleteObject(clickedImageData)
+        Flickr.photos.removeAtIndex(indexPath.row)
+        collectionView.reloadData()
     }
     
 }
