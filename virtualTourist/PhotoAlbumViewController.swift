@@ -26,7 +26,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     var currentPin: Pin?
     var currentContext: NSManagedObjectContext?
     
-    //var photos: [String] = FlickrClient.sharedInstance.photos
+    var photoData: [NSData] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +39,8 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 if (success != nil) {
                     NSOperationQueue.mainQueue().addOperationWithBlock {
                         //RELOAD DATA to show in collection
-                        self.collectionView.reloadData()
+                        //self.collectionView.reloadData()
+                        self.processUrls()
                     }
                 } else {
                     print("error", error)
@@ -49,18 +50,35 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             //display the images already saved
             print("already have images")
             //extract all the photos from the current pin (NSData)
-            let allCurrentPhotos = currentPin?.photos?.allObjects
+            //let allCurrentPhotos = currentPin?.photos?.allObjects
             //extract photos
-            for photo in allCurrentPhotos! {
-                //fill in the array of urls with strings of the NSData imgaes that were saved
-                Flickr.photos.append(String(photo.image))
-            }
+//            for photo in allCurrentPhotos! {
+//                if let nsDataImage = (photo as! Photo).image {
+//                }
+//            }
             collectionView.reloadData()
             print("Flickr", Flickr.photos.count)
         }
         collectionView.delegate = self
         collectionView.dataSource = self
         adjustFlowLayout(view.frame.size)
+    }
+    
+    func processUrls () {
+        //when first called need to make sure that the photos array is empty
+        photoData.removeAll()
+        Flickr.processUrls() { (data, error) in
+            //save the data to URL array and reload
+            if data != nil {
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+                    self.photoData.append(data!)
+                    self.collectionView.reloadData()
+                }
+            } else {
+                //error
+                print("error making nsdata from urls")
+            }
+        }
     }
     
     @IBAction func clickedButton(sender: AnyObject) {
@@ -133,19 +151,25 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             
         } else {
             //need to save data to core data if not anything already there
+            var count = 0
             for url in Flickr.photos {
+                count += 1
                 Flickr.getImageData(url) { (data, error) in
+                    count -= 1
                     if data != nil {
                         let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
                         self.currentPin?.photos?.setByAddingObject(dataToAdd)
                     } else {
                         print("bad data of image nothing returned")
                     }
-                    
+                    if count == 0 {
+                        self.Flickr.photos.removeAll()
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                        print("removed data flickr: ", self.Flickr.photos.count)
+                        print("saved data core: ", self.currentPin)
+                    }
                 }
             }
-            Flickr.photos.removeAll()
-            dismissViewControllerAnimated(true, completion: nil)
         }
         
         
@@ -156,10 +180,10 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     }
     
     func adjustFlowLayout(size: CGSize) {
-        let space: CGFloat = 3.0
+        let space: CGFloat = 1.0
         let dimension:CGFloat = size.width >= size.height ? (size.width - (5 * space)) / 6.0 :  (size.width - (2 * space)) / 3.0
-        flowLayout.minimumLineSpacing = 2.0
-        flowLayout.minimumInteritemSpacing = 2.0
+        flowLayout.minimumLineSpacing = 1.0
+        flowLayout.minimumInteritemSpacing = 1.0
         flowLayout.itemSize = CGSizeMake(dimension, dimension)
         
     }
@@ -171,11 +195,10 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         //if Flickr has images then return thrier count else return other number
-        if Flickr.photos.count > 0 {
-            return Flickr.photos.count
+        if photoData.count > 0 {
+            return photoData.count
         } else {
-            //TODO decide on a less random number here!
-            return 21
+            return 18
         }
         
     }
@@ -187,44 +210,47 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
         
         let activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+        activitySpinner.stopAnimating()
+        cell.imageView.willRemoveSubview(activitySpinner)
         
         //show the placeholder image
         cell.photo.image = UIImage(named: "placeholder")
-        //activitySpinner.center = cell.imageView.center
-        cell.imageView.addSubview(activitySpinner)
-        activitySpinner.startAnimating()
-
-        //if there are images to lod from Flickr then load them
-        if Flickr.photos.count > 0 {
-            
-            Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
-                if data != nil {
-                    let downloadedImage = UIImage(data: data!)
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
-                        cell.photo.image = downloadedImage
-                        //TODO SPINNERS NOT BEING REMOVED!!
-                        self.activitySpinner.stopAnimating()
-                        cell.imageView.willRemoveSubview(self.activitySpinner)
-                    }
-                } else {
-                    print("bad data of image nothing returned")
-                }
-            }
-        }
-    
-        return cell
         
+        //if there are images to lod from Flickr then load them
+        if photoData.count > 0 {
+            cell.imageView.addSubview(activitySpinner)
+            activitySpinner.startAnimating()
+            activitySpinner.center = cell.imageView.center
+            let photo = photoData[indexPath.row]
+            cell.photo.image = UIImage(data: photo)
+//            Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
+//                if data != nil {
+//                    let downloadedImage = UIImage(data: data!)
+//                    NSOperationQueue.mainQueue().addOperationWithBlock {
+//                        cell.photo.image = downloadedImage
+//
+//                    }
+//                } else {
+//                    print("bad data of image nothing returned")
+//                }
+//            }
+        }
+        return cell
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         //if we select an image then we want to delete it
         //make the selected image semi-opaque
-        print("clicked cell")
         let cell = collectionView.cellForItemAtIndexPath(indexPath)
-        cell!.alpha = 0.4
-        //trigger fn to change the text on the bottom button
-        viewButton.title = "Delete Photo"
-        currentIndexPath = indexPath
+        if cell?.alpha == 1 {
+            cell!.alpha = 0.2
+            //trigger fn to change the text on the bottom button
+            viewButton.title = "Delete Photo"
+            currentIndexPath = indexPath
+        } else {
+            cell?.alpha = 1
+        }
+        
     }
     
 }

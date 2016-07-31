@@ -70,7 +70,7 @@
                             </toolbar>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="CyU-cE-rqt">
                                 <rect key="frame" x="0.0" y="72" width="600" height="484"/>
-                                <color key="backgroundColor" red="1" green="0.94302138069999997" blue="0.6224071471" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.65599471811609555" green="0.63728159250124372" blue="0.68525641025641026" alpha="1" colorSpace="calibratedRGB"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="bH7-m1-QV1">
                                     <size key="itemSize" width="165" height="170"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -86,10 +86,10 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vt1-K4-Wol">
-                                                    <rect key="frame" x="8" y="8" width="149" height="154"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="165" height="170"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Hud-sJ-0gg">
-                                                            <rect key="frame" x="0.0" y="0.0" width="149" height="154"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="165" height="170"/>
                                                         </imageView>
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -104,10 +104,10 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="top" secondItem="IcO-Dv-AvE" secondAttribute="topMargin" id="4Dg-mi-foR"/>
-                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="bottom" secondItem="IcO-Dv-AvE" secondAttribute="bottomMargin" id="EbG-Yn-92N"/>
-                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="leading" secondItem="IcO-Dv-AvE" secondAttribute="leadingMargin" id="JRZ-te-ZZN"/>
-                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="trailing" secondItem="IcO-Dv-AvE" secondAttribute="trailingMargin" id="QTn-d6-KwM"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="top" secondItem="IcO-Dv-AvE" secondAttribute="topMargin" constant="-8" id="4Dg-mi-foR"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="bottom" secondItem="IcO-Dv-AvE" secondAttribute="bottomMargin" constant="8" id="EbG-Yn-92N"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="leading" secondItem="IcO-Dv-AvE" secondAttribute="leadingMargin" constant="-8" id="JRZ-te-ZZN"/>
+                                            <constraint firstItem="vt1-K4-Wol" firstAttribute="trailing" secondItem="IcO-Dv-AvE" secondAttribute="trailingMargin" constant="8" id="QTn-d6-KwM"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="imageView" destination="vt1-K4-Wol" id="AlX-IO-lhU"/>

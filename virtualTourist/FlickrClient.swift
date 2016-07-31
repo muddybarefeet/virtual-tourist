@@ -60,6 +60,32 @@ class FlickrClient {
         
     }
     
+    func processUrls (completionHandlerForProcessingUrls: (data: NSData?, error: String?) -> Void) {
+        //loop through the photo URLS and return
+        //each url returns a completion handler
+        for url in photos {
+            getImageData(url) { (data, error) in
+                if data != nil {
+                    completionHandlerForProcessingUrls(data: data, error: nil)
+                } else {
+                    completionHandlerForProcessingUrls(data: nil, error: error)
+                }
+            }
+        }
+    }
+    
+    func getImageData (image: String, completionHandlerForImageData: (data: NSData?, error: String?) -> Void) {
+        let imageURL = NSURL(string: image)!
+        let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
+            if error == nil {
+                completionHandlerForImageData(data: data, error: nil)
+            } else {
+                completionHandlerForImageData(data: nil, error: "No image data returned")
+            }
+        }
+        task.resume()
+    }
+    
     private func bboxString (latitude: Double, longitude: Double) -> String {
         let minimumLon = max(longitude - Constants.Flickr.SearchBBoxHalfWidth, Constants.Flickr.SearchLonRange.0)
         let minimumLat = max(latitude - Constants.Flickr.SearchBBoxHalfHeight, Constants.Flickr.SearchLatRange.0)
@@ -130,12 +156,7 @@ class FlickrClient {
             
             var photoArray: [String] = []
             
-            //take the array of data and make a new array of just the images
-//            for obj in collectionArray {
-//                if let imageURL = obj["url_m"] as? String {
-//                   photoArray.append(imageURL)
-//                }
-//            }
+            //only use the first 18 images
             var i = 0
             while i < 18 {
                 if let imageURL = collectionArray[i]["url_m"] as? String {
@@ -152,18 +173,6 @@ class FlickrClient {
         
         task.resume()
         
-    }
-    
-    func getImageData (image: String, completionHandlerForImageData: (data: NSData?, error: String?) -> Void) {
-        let imageURL = NSURL(string: image)!
-        let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
-            if error == nil {
-                completionHandlerForImageData(data: data, error: nil)
-            } else {
-                completionHandlerForImageData(data: nil, error: "No image data returned")
-            }
-        }
-        task.resume()
     }
     
 }
