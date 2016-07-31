@@ -86,11 +86,13 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     }
     
     @IBAction func clickedButton(sender: AnyObject) {
+        print("button clicked")
         if viewButton.title! == "New Album" {
             getNewAlbum()
         } else if viewButton.title! == "Delete Photo" {
+            print("to delete", currentIndexPath)
             if let indexPath = currentIndexPath {
-                Flickr.photos.removeAtIndex(indexPath.row)
+                photoData.removeAtIndex(indexPath.row)
             }
             //clear the indexPath variable and reset the button name
             currentIndexPath = nil
