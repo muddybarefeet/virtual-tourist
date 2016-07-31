@@ -52,11 +52,11 @@ class FlickrClient {
         
     }
     
-    func getImageData (image: String, completionHandlerForImageData: (data: UIImage?, error: String?) -> Void) {
+    func getImageData (image: String, completionHandlerForImageData: (data: NSData?, error: String?) -> Void) {
         let imageURL = NSURL(string: image)!
         let task = NSURLSession.sharedSession().dataTaskWithURL(imageURL) { (data, response, error) in
             if error == nil {
-                completionHandlerForImageData(data: UIImage(data: data!), error: nil)
+                completionHandlerForImageData(data: data, error: nil)
             } else {
                 completionHandlerForImageData(data: nil, error: "No image data returned")
             }

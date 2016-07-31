@@ -12,14 +12,13 @@ import CoreData
 
 class Photo: NSManagedObject {
 
-    convenience init(url: String, pin: Pin, context : NSManagedObjectContext){
+    convenience init(image: NSData, pin: Pin, context : NSManagedObjectContext){
         
-        if let ent = NSEntityDescription.entityForName("Photo",
-                                                       inManagedObjectContext: context){
+        if let ent = NSEntityDescription.entityForName("Photo", inManagedObjectContext: context){
             self.init(entity: ent, insertIntoManagedObjectContext: context)
-            self.url = url
-            self.createdAt = NSDate()
+            self.image = image
             self.pin = pin
+            self.createdAt = NSDate()
         }else{
             fatalError("Unable to find Entity name!")
         }
@@ -37,6 +36,5 @@ class Photo: NSManagedObject {
             return fmt.stringFromDate(createdAt!)
         }
     }
-
 
 }

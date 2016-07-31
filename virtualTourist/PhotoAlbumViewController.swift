@@ -27,7 +27,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if currentPin?.photo?.count == 0 {
+        if currentPin?.photos?.count == 0 {
             print("no pics currently")
             //then we need some pics from Flickr to display
             Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: false) { (data, error) in
@@ -86,21 +86,25 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     @IBAction func done(sender: AnyObject) {
         //add logic to save the photos to the pin for future!
         //if there is photos already saved then delete them and then save new ones
-        if currentPin?.photo?.count > 0 {
-            print("deleting old pins....?")
-            currentPin?.photo?.delete(currentPin?.photo)
-        }
+//        if currentPin?.photos?.count > 0 {
+//            print("deleting old pins....?")
+//            currentPin?.photos?.delete(currentPin?.photos)
+//        }
         
-        print("current pin deleted pics--------->", currentPin?.photo?.count)
+        print("current pin deleted pics--------->", currentPin?.photos?.count)
         //loop through the photos and save each to a Photo View
         
         for url in Flickr.photos {
-            let dataToAdd = Photo(url: url, pin: currentPin!, context: currentContext!)
-            currentPin?.photo?.setByAddingObject(dataToAdd)
-        }
-        
-        print("current pin with new pics---------->", currentPin?.photo?.count)
+            Flickr.getImageData(url) { (data, error) in
+                if data != nil {
+                    let dataToAdd = Photo(image: data!, pin: self.currentPin!, context: self.currentContext!)
+                    self.currentPin?.photos?.setByAddingObject(dataToAdd)
+                } else {
+                    print("bad data of image nothing returned")
+                }
 
+            }
+        }
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -132,7 +136,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         Flickr.getImageData(Flickr.photos[indexPath.row]) { (data, error) in
             if data != nil {
                 NSOperationQueue.mainQueue().addOperationWithBlock {
-                    let downloadedImage = data
+                    let downloadedImage = UIImage(data: data!)
                     cell.photoView.image = downloadedImage
                 }
             } else {
@@ -144,7 +148,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         //if we select an image then we want to delete it
-        let imageSelected = Flickr.photos[indexPath.row]
+        _ = Flickr.photos[indexPath.row]
         //now get the object for this index path
         
         
