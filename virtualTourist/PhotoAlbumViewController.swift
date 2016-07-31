@@ -102,8 +102,8 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: true) { (success, error) in
             if (success != nil) {
                 NSOperationQueue.mainQueue().addOperationWithBlock {
-                    self.collectionView.reloadData()
-                    print("photos saved", self.Flickr.photos.count)
+                    //self.collectionView.reloadData()
+                    self.processUrls()
                 }
             } else {
                 print("error", error)
