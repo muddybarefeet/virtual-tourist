@@ -27,24 +27,34 @@
                             </mapView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PVG-5Q-HBd">
                                 <rect key="frame" x="0.0" y="20" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="GUJ-Ir-wnl"/>
+                                </constraints>
                                 <items>
-                                    <navigationItem title="Virtual Tourist" id="zOy-zu-5a6"/>
+                                    <navigationItem title="Virtual Tourist" id="zOy-zu-5a6">
+                                        <barButtonItem key="rightBarButtonItem" title="Edit" id="Hce-Xk-VA1">
+                                            <connections>
+                                                <action selector="editButton:" destination="BYZ-38-t0r" id="RYo-H8-J1Z"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
                                 </items>
                             </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="7J1-B0-EK5" secondAttribute="trailing" constant="-20" id="4pT-Lj-ALs"/>
+                            <constraint firstItem="7J1-B0-EK5" firstAttribute="top" secondItem="PVG-5Q-HBd" secondAttribute="bottom" id="5ol-w8-NOe"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="7J1-B0-EK5" secondAttribute="bottom" id="BsP-rA-ah8"/>
                             <constraint firstItem="7J1-B0-EK5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="CBe-AM-9xk"/>
+                            <constraint firstItem="7J1-B0-EK5" firstAttribute="top" secondItem="PVG-5Q-HBd" secondAttribute="bottom" id="EQN-kU-5El"/>
                             <constraint firstItem="PVG-5Q-HBd" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="I9S-lK-WnH"/>
-                            <constraint firstItem="7J1-B0-EK5" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="64" id="N1e-bl-0om"/>
-                            <constraint firstItem="7J1-B0-EK5" firstAttribute="top" secondItem="PVG-5Q-HBd" secondAttribute="bottom" id="O2q-m8-ysF"/>
                             <constraint firstItem="PVG-5Q-HBd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="Xsy-MW-ZNn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="PVG-5Q-HBd" secondAttribute="trailing" constant="-20" id="wd6-qs-3Ac"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="editButton" destination="Hce-Xk-VA1" id="z4t-dV-rtE"/>
                         <outlet property="mapView" destination="7J1-B0-EK5" id="gYv-QA-YhD"/>
                         <segue destination="SfG-DR-KXI" kind="presentation" identifier="showPhotoAlbum" id="V8Z-yL-N91"/>
                     </connections>

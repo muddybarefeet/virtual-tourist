@@ -139,8 +139,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         if currentPin?.photos?.count > 0 {
             let context = currentPin?.managedObjectContext
             for photo in (currentPin?.photos)! {
-                //photo.removeAllObjects()
-                //NSManagedObjectContext.deleteObject(photo)
                 context!.deleteObject(photo as! NSManagedObject)
             }
             //save the deletion to the db
@@ -202,7 +200,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         
         //if there are images to lod from Flickr then load them
         if photoData.count > 0 {
-            print("set cell image")
             cell.imageView.addSubview(activitySpinner)
             //activitySpinner.startAnimating()
             //activitySpinner.center = cell.imageView.center
