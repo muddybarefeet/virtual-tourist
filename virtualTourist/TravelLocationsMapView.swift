@@ -61,14 +61,22 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             //let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin
             //delete the pin
             if let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin {
-                fetchedResultsController!.managedObjectContext.deleteObject(pin as NSManagedObject)
-                //save the update and then reload the view
+                fetchedResultsController!.managedObjectContext.deleteObject(pin)
+                //save the update
                 do {
                     try fetchedResultsController!.managedObjectContext.save()
                 } catch {
                     print("not save")
                 }
-                //delete the pin
+                //test to see if item  deleted
+                let fetchRequest = NSFetchRequest(entityName: "Pin")
+                do {
+                    let fetchedEntities = try fetchedResultsController!.managedObjectContext.executeFetchRequest(fetchRequest) as! [Pin]
+                    print("post save", fetchedEntities.count)
+                } catch {
+                    print("failed")
+                }
+                //delete the pin from the map
                 mapView.removeAnnotation(view.annotation!)
             }
         } else {

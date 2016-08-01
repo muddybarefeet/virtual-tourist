@@ -102,6 +102,7 @@ struct CoreDataStack {
 extension CoreDataStack {
     
     func save() {
+        print("save called")
         context.performBlockAndWait(){
             if self.context.hasChanges{
                 do{
