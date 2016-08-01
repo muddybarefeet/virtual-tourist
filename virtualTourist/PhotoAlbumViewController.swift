@@ -10,6 +10,7 @@
 import UIKit
 import MapKit
 import CoreData
+import MapKit
 
 class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollectionViewDataSource {
     
@@ -17,7 +18,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var viewButton: UIBarButtonItem!
-
+    @IBOutlet weak var mapDetailView: MKMapView!
     
     let Flickr = FlickrClient.sharedInstance
     var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
@@ -29,6 +30,8 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //on load the page we want to get the coords from the photo pin that was passed and add annotation on mapDetailView and zoom in
+        addPinLocationToMap()
         viewButton.title = "New Album"
         
         if currentPin?.photos?.count == 0 {
@@ -83,6 +86,20 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 print("error making nsdata from urls")
             }
         }
+    }
+    
+    func addPinLocationToMap () {
+        let coordinate = CLLocationCoordinate2D(latitude: Double(currentPin!.latitude!), longitude: Double(currentPin!.longitude!))
+        let latDelta:CLLocationDegrees = 1.0
+        let longDelta:CLLocationDegrees = 1.0
+        let theSpan:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, longDelta)
+        let pointLocation:CLLocationCoordinate2D = CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude)
+        let region:MKCoordinateRegion = MKCoordinateRegionMake(pointLocation, theSpan)
+        mapDetailView.setRegion(region, animated: true)
+        //now add the annotation
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        mapDetailView.addAnnotation(annotation)
     }
     
     @IBAction func clickedButton(sender: AnyObject) {

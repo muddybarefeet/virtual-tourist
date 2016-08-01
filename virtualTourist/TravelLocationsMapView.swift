@@ -87,14 +87,13 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
 }
 
+//class to make it possible to pass the pin along to the next view controller
 class CustomPointAnnotation: MKPointAnnotation {
     
     var id: NSManagedObjectID?
-    //var coordinates: CLLocationCoordinate2D?
     
     init(coreDataID: NSManagedObjectID) {
         id = coreDataID
-//        coordinates = coords
     }
     
 }
