@@ -58,9 +58,19 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         //check if meant to delete pin or to segue!
         if editButton.title == "Done" {
             //delete the pin from core data
-//            let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin
-//            //delete the pin
-//            fetchedResultsController!.managedObjectContext.deleteObject(pin as! NSManagedObject)
+            //let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin
+            //delete the pin
+            if let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin {
+                fetchedResultsController!.managedObjectContext.deleteObject(pin as NSManagedObject)
+                //save the update and then reload the view
+                do {
+                    try fetchedResultsController!.managedObjectContext.save()
+                } catch {
+                    print("not save")
+                }
+                //delete the pin
+                mapView.removeAnnotation(view.annotation!)
+            }
         } else {
             performSegueWithIdentifier("showPhotoAlbum", sender: nil)
         }
@@ -109,7 +119,8 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             view.addSubview(label)
         } else if (editButton.title == "Done") {
             print("done")
-           
+            view.frame.origin.y = 0
+            editButton.title = "Edit"
         }
         
     }
