@@ -190,8 +190,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
-        
         //get the cell to show
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
         
@@ -204,6 +202,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         
         //if there are images to lod from Flickr then load them
         if photoData.count > 0 {
+            print("set cell image")
             cell.imageView.addSubview(activitySpinner)
             //activitySpinner.startAnimating()
             //activitySpinner.center = cell.imageView.center
