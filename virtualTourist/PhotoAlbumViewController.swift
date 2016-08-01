@@ -30,6 +30,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("current pin", currentPin)
         //on load the page we want to get the coords from the photo pin that was passed and add annotation on mapDetailView and zoom in
         addPinLocationToMap()
         viewButton.title = "New Album"

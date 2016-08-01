@@ -80,13 +80,13 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
                 mapView.removeAnnotation(view.annotation!)
             }
         } else {
-            performSegueWithIdentifier("showPhotoAlbum", sender: nil)
+            performSegueWithIdentifier("showAlbum", sender: nil)
         }
     }
     
     //coords passed to the new controller
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject!) {
-        if segue.identifier == "showPhotoAlbum" {
+        if segue.identifier == "showAlbum" {
             let controller = segue.destinationViewController as! PhotoAlbumViewController
             let annotation = mapView.selectedAnnotations[0]
             mapView.deselectAnnotation(annotation, animated: true)
