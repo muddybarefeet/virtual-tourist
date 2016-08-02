@@ -31,6 +31,15 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //load placeholder images into the data array
+        var i = 0
+        while i < 18 {
+            let photoPlaceholder = UIImage(named: "placeholder")
+            let imageData: NSData = UIImagePNGRepresentation(photoPlaceholder!)!
+            photoData.append(imageData)
+            i+=1
+        }
+        
         self.navigationItem.hidesBackButton = true
         let newBackButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "back"), style: .Plain, target: self, action: #selector(self.done))
         self.navigationItem.leftBarButtonItem = newBackButton
@@ -50,7 +59,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                         self.processUrls()
                     }
                 } else {
-                    print("error", error)
+                    self.displayError("There was an error getting the image data for this location. Retry again later.")
                 }
             }
         } else {
@@ -58,7 +67,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             print("already have images")
             //just incase other data is in the photoData array empty it
             photoData.removeAll()
-            
+            //don't bother with placeholders here
             //extract all the photos from the current pin (NSData)
             let allCurrentPhotos = currentPin?.photos?.allObjects
             //extract photos
@@ -67,7 +76,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     photoData.append(nsDataImage)
                 }
             }
-            
             collectionView.reloadData()
             print("CORE DATA LOADED", photoData.count)
         }
@@ -80,16 +88,32 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     func processUrls () {
         //when first called need to make sure that the photos array is empty
         photoData.removeAll()
+        //then make the array full of 18 placeholders
+        var i = 0
+        while i < 18 {
+            //photoData.append(NSData(named: "placeholder"))
+            //var b = NSDataAsset.init(name: "placeholder")
+            let photoPlaceholder = UIImage(named: "placeholder")
+            let imageData: NSData = UIImagePNGRepresentation(photoPlaceholder!)!
+            photoData.append(imageData)
+            i+=1
+        }
+        collectionView.reloadData()
+        var counter = 0
         Flickr.processUrls() { (data, error) in
             //save the data to URL array and reload
             if data != nil {
                 NSOperationQueue.mainQueue().addOperationWithBlock {
-                    self.photoData.append(data!)
+                    //want to add to the front of the array of photos and then remove the last one
+                    self.photoData.insert(data!, atIndex: counter)
+                    self.photoData.removeLast()
+                    //self.photoData.append(data!)
                     self.collectionView.reloadData()
+                    print("counter---->", counter)
+                    counter+=1
                 }
             } else {
-                //error
-                print("error making nsdata from urls")
+                self.displayError("There was a problem converting the image URLs to images")
             }
         }
     }
@@ -109,7 +133,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     }
     
     @IBAction func clickedButton(sender: AnyObject) {
-        print("button clicked")
         if viewButton.title! == "New Album" {
             getNewAlbum()
         } else if viewButton.title! == "Delete Photo" {
@@ -133,7 +156,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     self.processUrls()
                 }
             } else {
-                print("error", error)
+                self.displayError("There was an error getting the image data for this location. Retry again later.")
             }
         }
     }
@@ -152,6 +175,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 try context?.save()
             } catch {
                 print("not save")
+                self.displayError("There was a problem saving the latest album to the database")
             }
             print("pin new post delete------>", currentPin?.photos?.count)
         }
@@ -164,6 +188,16 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         }
         navigationController?.popToRootViewControllerAnimated(true)
         //self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    private func displayError (message: String) {
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        let OKAction = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
+        }
+        alertController.addAction(OKAction)
+        NSOperationQueue.mainQueue().addOperationWithBlock {
+            self.presentViewController(alertController, animated: true, completion:nil)
+        }
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -197,19 +231,8 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         //get the cell to show
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
-        
-        //let activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
-        //activitySpinner.stopAnimating()
-        //cell.imageView.willRemoveSubview(activitySpinner)
-        
-        //show the placeholder image
         cell.photo.image = UIImage(named: "placeholder")
-        
-        //if there are images to lod from Flickr then load them
         if photoData.count > 0 {
-            cell.imageView.addSubview(activitySpinner)
-            //activitySpinner.startAnimating()
-            //activitySpinner.center = cell.imageView.center
             let photo = photoData[indexPath.row]
             cell.photo.image = UIImage(data: photo)
         }

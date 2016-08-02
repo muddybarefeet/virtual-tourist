@@ -58,8 +58,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         //check if meant to delete pin or to segue!
         if editButton.title == "Done" {
             //delete the pin from core data
-            //let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin
-            //delete the pin
             if let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin {
                 fetchedResultsController!.managedObjectContext.deleteObject(pin)
                 //save the update
@@ -67,14 +65,14 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
                     try fetchedResultsController!.managedObjectContext.save()
                 } catch {
                     print("not save")
-                }
-                //test to see if item  deleted
-                let fetchRequest = NSFetchRequest(entityName: "Pin")
-                do {
-                    let fetchedEntities = try fetchedResultsController!.managedObjectContext.executeFetchRequest(fetchRequest) as! [Pin]
-                    print("post save", fetchedEntities.count)
-                } catch {
-                    print("failed")
+                    let alertController = UIAlertController(title: "Error", message: "The latest changes were not saved", preferredStyle: UIAlertControllerStyle.Alert)
+                    let OKAction = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
+                    }
+                    alertController.addAction(OKAction)
+                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                        self.presentViewController(alertController, animated: true, completion:nil)
+                    }
+                    
                 }
                 //delete the pin from the map
                 mapView.removeAnnotation(view.annotation!)
@@ -111,14 +109,12 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     @IBAction func editButton(sender: AnyObject) {
         print("button clicked", editButton.title)
-        //if button says edit the go to delete mode
         let screenSize = UIScreen.mainScreen().bounds.size
         let label = UILabel(frame: CGRectMake(0, (view.frame.maxY), screenSize.width, 44))
+        //if button says edit the go to delete mode
         if (editButton.title == "Edit") {
-            print("button clicked EDIT")
             editButton.title = "Done"
-            //display view on bottom of the screen
-            //label.center = CGPointMake(160, 284)
+            //add message to the user
             label.textAlignment = NSTextAlignment.Center
             label.text = "Tap a pin to delete it"
             label.backgroundColor = UIColor.redColor()
@@ -127,6 +123,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             view.addSubview(label)
         } else if (editButton.title == "Done") {
             print("done")
+            //return to normal screen view
             view.frame.origin.y = 0
             editButton.title = "Edit"
         }
@@ -145,42 +142,4 @@ class CustomPointAnnotation: MKPointAnnotation {
         id = coreDataID
     }
     
-}
-
-extension TravelLocationsMapView {
-    func subscribeToKeyboardNotifications () {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(TravelLocationsMapView.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(TravelLocationsMapView.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    func unsubscribeFromKeyboardNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name:
-            UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name:
-            UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    func keyboardWillShow(notification: NSNotification) {
-//        if bottomText.isFirstResponder() {
-//            view.frame.origin.y = getKeyboardHeight(notification) * (-1)
-//        } else if topText.isFirstResponder(){
-//            reset()
-//        }
-    }
-    
-    //  return the keyboard to the bottom position
-    func reset() {
-        self.view.frame.origin.y = 0
-    }
-    
-    func keyboardWillHide(notification: NSNotification) {
-        reset()
-    }
-    
-    func getKeyboardHeight(notification: NSNotification) -> CGFloat {
-        let userInfo = notification.userInfo!
-        let keyboardSize = userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue
-        return keyboardSize.CGRectValue().height
-    }
-
 }
