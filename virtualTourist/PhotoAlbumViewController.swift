@@ -30,6 +30,11 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationItem.hidesBackButton = true
+        let newBackButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "back"), style: .Plain, target: self, action: #selector(self.done))
+        self.navigationItem.leftBarButtonItem = newBackButton
+        
         print("current pin", currentPin)
         //on load the page we want to get the coords from the photo pin that was passed and add annotation on mapDetailView and zoom in
         addPinLocationToMap()
@@ -133,8 +138,8 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         }
     }
     
-    @IBAction func done(sender: AnyObject) {
-        
+    func done(sender: AnyObject) {
+        print("done button")
         let context = currentPin?.managedObjectContext
         //if there are already pins saved then want to delete and then resave the core data models
         if currentPin?.photos?.count > 0 {
@@ -157,7 +162,8 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             let dataToAdd = Photo(image: blob, pin: self.currentPin!, context: context!)
             self.currentPin?.photos?.setByAddingObject(dataToAdd)
         }
-        self.dismissViewControllerAnimated(true, completion: nil)
+        navigationController?.popToRootViewControllerAnimated(true)
+        //self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
