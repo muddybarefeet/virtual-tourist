@@ -12,7 +12,7 @@ import MapKit
 import CoreData
 import MapKit
 
-class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollectionViewDataSource {
+class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
@@ -59,7 +59,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                         self.processUrls()
                     }
                 } else {
-                    self.displayError("There was an error getting the image data for this location. Retry again later.")
+                    self.displayError("There was an error getting the image data for this location: \(error)")
                 }
             }
         } else {
@@ -67,7 +67,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             print("already have images")
             //just incase other data is in the photoData array empty it
             photoData.removeAll()
-            //don't bother with placeholders here
+            //don't bother with placeholders here as pretty fast
             //extract all the photos from the current pin (NSData)
             let allCurrentPhotos = currentPin?.photos?.allObjects
             //extract photos
@@ -77,7 +77,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 }
             }
             collectionView.reloadData()
-            print("CORE DATA LOADED", photoData.count)
         }
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -91,8 +90,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         //then make the array full of 18 placeholders
         var i = 0
         while i < 18 {
-            //photoData.append(NSData(named: "placeholder"))
-            //var b = NSDataAsset.init(name: "placeholder")
             let photoPlaceholder = UIImage(named: "placeholder")
             let imageData: NSData = UIImagePNGRepresentation(photoPlaceholder!)!
             photoData.append(imageData)
@@ -109,7 +106,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     self.photoData.removeLast()
                     //self.photoData.append(data!)
                     self.collectionView.reloadData()
-                    print("counter---->", counter)
                     counter+=1
                 }
             } else {
@@ -136,7 +132,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         if viewButton.title! == "New Album" {
             getNewAlbum()
         } else if viewButton.title! == "Delete Photo" {
-            print("to delete", currentIndexPath)
             if let indexPath = currentIndexPath {
                 photoData.removeAtIndex(indexPath.row)
             }
@@ -156,7 +151,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     self.processUrls()
                 }
             } else {
-                self.displayError("There was an error getting the image data for this location. Retry again later.")
+                self.displayError("There was an error getting the image data for this location: \(error)")
             }
         }
     }
@@ -177,7 +172,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 print("not save")
                 self.displayError("There was a problem saving the latest album to the database")
             }
-            print("pin new post delete------>", currentPin?.photos?.count)
         }
         
         //now resave the latest photos to core data
@@ -187,7 +181,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             self.currentPin?.photos?.setByAddingObject(dataToAdd)
         }
         navigationController?.popToRootViewControllerAnimated(true)
-        //self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     private func displayError (message: String) {
@@ -229,7 +222,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        //get the cell to show
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
         cell.photo.image = UIImage(named: "placeholder")
         if photoData.count > 0 {
