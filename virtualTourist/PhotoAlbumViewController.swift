@@ -44,7 +44,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         let newBackButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "back"), style: .Plain, target: self, action: #selector(self.done))
         self.navigationItem.leftBarButtonItem = newBackButton
         
-        print("current pin", currentPin)
         //on load the page we want to get the coords from the photo pin that was passed and add annotation on mapDetailView and zoom in
         addPinLocationToMap()
         viewButton.title = "New Album"
@@ -59,7 +58,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                         self.processUrls()
                     }
                 } else {
-                    self.displayError("There was an error getting the image data for this location: \(error)")
+                    self.displayError("There was an error getting the image data for this location: \(error!)")
                 }
             }
         } else {
@@ -151,13 +150,12 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                     self.processUrls()
                 }
             } else {
-                self.displayError("There was an error getting the image data for this location: \(error)")
+                self.displayError("There was an error getting the image data for this location: \(error!)")
             }
         }
     }
     
     func done(sender: AnyObject) {
-        print("done button")
         let context = currentPin?.managedObjectContext
         //if there are already pins saved then want to delete and then resave the core data models
         if currentPin?.photos?.count > 0 {
@@ -169,8 +167,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             do {
                 try context?.save()
             } catch {
-                print("not save")
-                self.displayError("There was a problem saving the latest album to the database")
+                self.displayError("There was a problem saving the current album to the database")
             }
         }
         
@@ -211,14 +208,12 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
 extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         //if Flickr has images then return thrier count else return other number
         if photoData.count > 0 {
             return photoData.count
         } else {
             return 18
         }
-        
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -228,6 +223,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
             let photo = photoData[indexPath.row]
             cell.photo.image = UIImage(data: photo)
         }
+        cell.photo.alpha = 1.0
         return cell
     }
     
@@ -242,6 +238,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
             currentIndexPath = indexPath
         } else {
             cell?.alpha = 1
+            viewButton.title = "New Album"
         }
         
     }
