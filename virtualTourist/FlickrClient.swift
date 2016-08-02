@@ -38,11 +38,10 @@ class FlickrClient {
             print("random page", randomPageNumber)
             parameters[Constants.FlickrParameterKeys.Page] = String(randomPageNumber)
         }
-        print("request made ------")
+
         let request = makeRequest(baseUrl, parameters: parameters)
         
         sendRequest(request) { (data, response, error) in
-            print("return request")
             if (error != nil) {
                 print("error", error)
                 completionHandlerForImages(success: nil, error: error)
@@ -92,7 +91,6 @@ class FlickrClient {
         let minimumLat = max(latitude - Constants.Flickr.SearchBBoxHalfHeight, Constants.Flickr.SearchLatRange.0)
         let maximumLon = min(longitude + Constants.Flickr.SearchBBoxHalfWidth, Constants.Flickr.SearchLonRange.1)
         let maximumLat = min(latitude + Constants.Flickr.SearchBBoxHalfHeight, Constants.Flickr.SearchLatRange.1)
-        print("range------> ", minimumLon," ",minimumLat," ",maximumLon," ",maximumLat)
         return "\(minimumLon),\(minimumLat),\(maximumLon),\(maximumLat)"
     }
     
@@ -137,7 +135,6 @@ class FlickrClient {
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "Could not parse the response to a readable format")
                 return
             }
-            print("in send request func post json", parsedResult)
             //extract the key for images array
             guard let photos = parsedResult!["photos"] as? NSDictionary else {
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There were no photo key in the response")
@@ -156,7 +153,6 @@ class FlickrClient {
                 completionHandlerForRequest(data: nil, response: (response as! NSHTTPURLResponse), error: "There were no photos returned in the response")
                 return
             }
-            print("in send request func post collection ARRAY", collectionArray)
             
             var photoArray: [String] = []
             
