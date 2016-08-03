@@ -195,12 +195,11 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     }
     
     func adjustFlowLayout(size: CGSize) {
-        let space: CGFloat = 1.0
+        let space: CGFloat = 0.0
         let dimension:CGFloat = size.width >= size.height ? (size.width - (5 * space)) / 6.0 :  (size.width - (2 * space)) / 3.0
-        flowLayout.minimumLineSpacing = 1.0
-        flowLayout.minimumInteritemSpacing = 1.0
+        flowLayout.minimumLineSpacing = 0.0
+        flowLayout.minimumInteritemSpacing = 0.0
         flowLayout.itemSize = CGSizeMake(dimension, dimension)
-        
     }
     
 }

@@ -47,14 +47,12 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
             let annotation = CustomPointAnnotation(coreDataID: id)
             annotation.coordinate = coordinate
-            print("annotation", annotation.id)
             mapView.addAnnotation(annotation)
         }
     }
     
     //on click of a pin go to the album
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        print("pin clicked", view.annotation?.coordinate)
         //check if meant to delete pin or to segue!
         if editButton.title == "Done" {
             //delete the pin from core data
@@ -64,7 +62,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
                 do {
                     try fetchedResultsController!.managedObjectContext.save()
                 } catch {
-                    print("not save")
                     let alertController = UIAlertController(title: "Error", message: "The latest changes were not saved", preferredStyle: UIAlertControllerStyle.Alert)
                     let OKAction = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
                     }
@@ -108,7 +105,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     }
     
     @IBAction func editButton(sender: AnyObject) {
-        print("button clicked", editButton.title)
         let screenSize = UIScreen.mainScreen().bounds.size
         let label = UILabel(frame: CGRectMake(0, (view.frame.maxY), screenSize.width, 44))
         //if button says edit the go to delete mode
@@ -122,7 +118,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             view.frame.origin.y = 44 * (-1)
             view.addSubview(label)
         } else if (editButton.title == "Done") {
-            print("done")
             //return to normal screen view
             view.frame.origin.y = 0
             editButton.title = "Edit"
@@ -130,16 +125,12 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         
     }
     
-    
 }
 
 //class to make it possible to pass the pin along to the next view controller
 class CustomPointAnnotation: MKPointAnnotation {
-    
     var id: NSManagedObjectID?
-    
     init(coreDataID: NSManagedObjectID) {
         id = coreDataID
     }
-    
 }
