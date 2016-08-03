@@ -222,8 +222,8 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         if photoData.count > 0 {
             let photo = photoData[indexPath.row]
             cell.photo.image = UIImage(data: photo)
+            cell.alpha = 1.0
         }
-        cell.photo.alpha = 1.0
         return cell
     }
     
