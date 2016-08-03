@@ -139,15 +139,15 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="CyU-cE-rqt" firstAttribute="leading" secondItem="zr5-Y6-6Ax" secondAttribute="leading" id="0gd-uS-wzP"/>
                             <constraint firstItem="W4M-rj-kIJ" firstAttribute="top" secondItem="CyU-cE-rqt" secondAttribute="bottom" id="64d-Ng-5La"/>
                             <constraint firstItem="nMZ-KN-l84" firstAttribute="top" secondItem="0kM-SM-iJD" secondAttribute="bottom" id="8di-nR-fhs"/>
                             <constraint firstAttribute="trailingMargin" secondItem="nMZ-KN-l84" secondAttribute="trailing" constant="-20" id="9DZ-EX-Jnw"/>
                             <constraint firstItem="W4M-rj-kIJ" firstAttribute="leading" secondItem="zr5-Y6-6Ax" secondAttribute="leadingMargin" constant="-20" id="9fT-xw-N9I"/>
                             <constraint firstItem="CyU-cE-rqt" firstAttribute="top" secondItem="nMZ-KN-l84" secondAttribute="bottom" constant="-1" id="9ql-I3-Pqh"/>
                             <constraint firstItem="gbC-7g-5eS" firstAttribute="top" secondItem="W4M-rj-kIJ" secondAttribute="bottom" id="JcB-tg-rHu"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="CyU-cE-rqt" secondAttribute="trailing" constant="-20" id="QQ2-9H-Bul"/>
                             <constraint firstItem="nMZ-KN-l84" firstAttribute="leading" secondItem="zr5-Y6-6Ax" secondAttribute="leadingMargin" constant="-20" id="hHx-er-8ky"/>
-                            <constraint firstItem="CyU-cE-rqt" firstAttribute="leading" secondItem="zr5-Y6-6Ax" secondAttribute="leadingMargin" constant="-20" id="jaO-Ey-2Q2"/>
+                            <constraint firstAttribute="trailing" secondItem="CyU-cE-rqt" secondAttribute="trailing" id="pZn-cx-jZo"/>
                             <constraint firstAttribute="trailingMargin" secondItem="W4M-rj-kIJ" secondAttribute="trailing" constant="-20" id="xZH-OD-cxS"/>
                         </constraints>
                     </view>

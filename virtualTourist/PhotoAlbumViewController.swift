@@ -30,8 +30,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //load placeholder images into the data array
+        //load placeholder images into the data array to get displayed to the user
         var i = 0
         while i < 18 {
             let photoPlaceholder = UIImage(named: "placeholder")
@@ -39,15 +38,14 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             photoData.append(imageData)
             i+=1
         }
-        
+        //customize the navigation bar button
         self.navigationItem.hidesBackButton = true
         let newBackButton: UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "back"), style: .Plain, target: self, action: #selector(self.done))
         self.navigationItem.leftBarButtonItem = newBackButton
-        
-        //on load the page we want to get the coords from the photo pin that was passed and add annotation on mapDetailView and zoom in
+        //display the chosen pin loaction to the map
         addPinLocationToMap()
         viewButton.title = "New Album"
-        
+        //if there were no photos saved in core data for this location then get photos from Flickr
         if currentPin?.photos?.count == 0 {
             print("no pics currently")
             //then we need some pics from Flickr to display
@@ -66,10 +64,9 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
             print("already have images")
             //just incase other data is in the photoData array empty it
             photoData.removeAll()
-            //don't bother with placeholders here as pretty fast
-            //extract all the photos from the current pin (NSData)
+            //don't bother with placeholders here as pretty fast to load
+            //extract all the photos from the current pin (NSData) and put in the arrray of photos to display
             let allCurrentPhotos = currentPin?.photos?.allObjects
-            //extract photos
             for photo in allCurrentPhotos! {
                 if let nsDataImage = (photo as! Photo).image {
                     photoData.append(nsDataImage)
@@ -82,7 +79,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         adjustFlowLayout(view.frame.size)
     }
     
-    //read dowdloaded urls and add to NSData array to show to the user
+    //read downloaded urls and add to NSData array to show to the user
     func processUrls () {
         //when first called need to make sure that the photos array is empty
         photoData.removeAll()
@@ -96,23 +93,24 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         }
         collectionView.reloadData()
         var counter = 0
+        //process the urls from Flickr and add to image data array
         Flickr.processUrls() { (data, error) in
             //save the data to URL array and reload
             if data != nil {
+                self.photoData.insert(data!, atIndex: counter)
+                self.photoData.removeLast()
+                //add just the page reload to the main queue
                 NSOperationQueue.mainQueue().addOperationWithBlock {
-                    //want to add to the front of the array of photos and then remove the last one
-                    self.photoData.insert(data!, atIndex: counter)
-                    self.photoData.removeLast()
-                    //self.photoData.append(data!)
                     self.collectionView.reloadData()
-                    counter+=1
                 }
+                counter+=1
             } else {
                 self.displayError("There was a problem converting the image URLs to images")
             }
         }
     }
     
+    //add the loaction for this album to the mapview
     func addPinLocationToMap () {
         let coordinate = CLLocationCoordinate2D(latitude: Double(currentPin!.latitude!), longitude: Double(currentPin!.longitude!))
         let latDelta:CLLocationDegrees = 1.0
@@ -127,6 +125,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         mapDetailView.addAnnotation(annotation)
     }
     
+    //actions to happen for the button on the bottom of the page - either get new album from Flickr or delete photo
     @IBAction func clickedButton(sender: AnyObject) {
         if viewButton.title! == "New Album" {
             getNewAlbum()
@@ -141,6 +140,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         }
     }
     
+    //download a new album of images from Flickr
     func getNewAlbum() {
         //logic to get new selection of photos
         Flickr.getImagesForLocation(Double((currentPin?.latitude)!), long: Double((currentPin?.longitude)!), recall: true) { (success, error) in
@@ -155,6 +155,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         }
     }
     
+    //function called when the user leaves the page and returns to the map, this saves/updates all the photo datat for this location in core data
     func done(sender: AnyObject) {
         let context = currentPin?.managedObjectContext
         //if there are already pins saved then want to delete and then resave the core data models
@@ -170,7 +171,6 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
                 self.displayError("There was a problem saving the current album to the database")
             }
         }
-        
         //now resave the latest photos to core data
         for blob in photoData {
             //make new photo obj and add to pin
@@ -180,6 +180,7 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         navigationController?.popToRootViewControllerAnimated(true)
     }
     
+    //error function for this page
     private func displayError (message: String) {
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.Alert)
         let OKAction = UIAlertAction(title: "OK", style: .Default) { (action:UIAlertAction!) in
@@ -190,22 +191,26 @@ class PhotoAlbumViewController: CoreDataTravelLocationViewController, UICollecti
         }
     }
     
+    //function to update the way the collection images are sized
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         adjustFlowLayout(size)
     }
     
+    //called to update the sizes of the images in the colleciton/lay them out initially
     func adjustFlowLayout(size: CGSize) {
-        let space: CGFloat = 0.0
+        let space: CGFloat = 3.0
         let dimension:CGFloat = size.width >= size.height ? (size.width - (5 * space)) / 6.0 :  (size.width - (2 * space)) / 3.0
-        flowLayout.minimumLineSpacing = 0.0
-        flowLayout.minimumInteritemSpacing = 0.0
+        flowLayout.minimumLineSpacing = 3.0
+        flowLayout.minimumInteritemSpacing = 3.0
         flowLayout.itemSize = CGSizeMake(dimension, dimension)
     }
     
 }
 
+//collection view delegate functions
 extension PhotoAlbumViewController: UICollectionViewDelegate {
     
+    //logic for how many rows to display
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //if Flickr has images then return thrier count else return other number
         if photoData.count > 0 {
@@ -215,6 +220,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         }
     }
     
+    //logic for displaying an image
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoCell", forIndexPath: indexPath) as! PhotoCollectionCellViewController
         cell.photo.image = UIImage(named: "placeholder")
@@ -226,6 +232,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         return cell
     }
     
+    //logic for clicking on image
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         //if we select an image then we want to delete it
         //make the selected image semi-opaque
@@ -239,7 +246,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
             cell?.alpha = 1
             viewButton.title = "New Album"
         }
-        
     }
     
 }

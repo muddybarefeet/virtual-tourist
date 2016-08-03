@@ -34,7 +34,6 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         let longUIPress = UILongPressGestureRecognizer(target: self, action: #selector(self.addPin))
         longUIPress.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longUIPress)
-        
     }
     
     //load the existing pins to the map
@@ -58,7 +57,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
             //delete the pin from core data
             if let pin = fetchedResultsController!.managedObjectContext.objectWithID((view.annotation as! CustomPointAnnotation).id!) as? Pin {
                 fetchedResultsController!.managedObjectContext.deleteObject(pin)
-                //save the update
+                //save the update to core data
                 do {
                     try fetchedResultsController!.managedObjectContext.save()
                 } catch {
@@ -69,9 +68,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
                     NSOperationQueue.mainQueue().addOperationWithBlock {
                         self.presentViewController(alertController, animated: true, completion:nil)
                     }
-                    
                 }
-                //delete the pin from the map
                 mapView.removeAnnotation(view.annotation!)
             }
         } else {
@@ -92,10 +89,9 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
     
     //delegate method to trigger function on tap of a pin
     func addPin(gestureRecognizer:UIGestureRecognizer){
-        if gestureRecognizer.state == .Ended {
+        if gestureRecognizer.state == .Began {
             let touchPoint = gestureRecognizer.locationInView(mapView)
             let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-            
             let newPin = Pin(lat: newCoordinates.latitude, long: newCoordinates.longitude, context: fetchedResultsController!.managedObjectContext)
             let id = newPin.objectID
             let annotation = CustomPointAnnotation(coreDataID: id)
@@ -104,6 +100,7 @@ class TravelLocationsMapView: CoreDataTravelLocationViewController, MKMapViewDel
         }
     }
     
+    //click to entor edit mode and allow the user to delete a pin to clicking it
     @IBAction func editButton(sender: AnyObject) {
         let screenSize = UIScreen.mainScreen().bounds.size
         let label = UILabel(frame: CGRectMake(0, (view.frame.maxY), screenSize.width, 44))
